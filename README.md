@@ -1,45 +1,30 @@
-# frontend
+# MakkaPakka Live - 前端
 
-This template should help get you started developing with Vue 3 in Vite.
+基于 Vue3 打造的直播平台（及其管理端）
 
-## Recommended IDE Setup
+## 技术栈 & 库
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- [Vue.js](https://cn.vuejs.org/guide/introduction.html) - 响应式框架
+- [TypeScript](https://ts.nodejs.cn/docs/handbook/intro.html) - JS+类型
+- [Ant Design Vue](https://www.antdv.com/docs/vue/getting-started-cn) - UI组件库
+- [VueUse](https://vueuse.org/guide/) - Vue3的组合式函数库
+- [VueRouter](https://router.vuejs.org/zh/introduction.html) - Vue的路由库
+- [Pinia](https://pinia.vuejs.org/zh/introduction.html) - Vue的状态管理库
+- [unplugin-vue-router](https://uvr.esm.is/introduction.html) - 自动生成路由插件
+- [unplugin-auto-import](https://github.com/unplugin/unplugin-auto-import) - 自动导入插件
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-pnpm install
-```
-
-### Compile and Hot-Reload for Development
+## 快速开始
 
 ```sh
-pnpm dev
+pnpm install # 安装依赖
+pnpm dev # 启动开发服务器
+pnpm build # 构建产物
+pnpm lint # 使用ESLint检查并修复代码
 ```
 
-### Type-Check, Compile and Minify for Production
+## 开发文档
 
-```sh
-pnpm build
-```
+[自动导入](./docs/自动导入.md)
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+[页面文件约定](./docs/页面文件约定.md)
 
-```sh
-pnpm test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```

@@ -4,6 +4,7 @@ require('@rushstack/eslint-patch/modern-module-resolution');
 module.exports = {
   root: true,
   'extends': [
+    './.eslintrc-auto-import.json',
     'plugin:vue/vue3-essential',
     'eslint:recommended',
     '@vue/eslint-config-typescript',
@@ -13,6 +14,10 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   rules: {
-    "semi": ['warn', 'always'],
+    'semi': ['warn', 'always'],
+    'vue/multi-word-component-names': 'off',
+  },
+  "settings": {
+    "import/core-modules": ["vue-router/auto", "vue-router/auto-routes"]
   }
 };
