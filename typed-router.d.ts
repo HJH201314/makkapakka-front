@@ -19,6 +19,7 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '管理首页': RouteRecordInfo<'管理首页', '/admin', Record<never, never>, Record<never, never>>,
+    '管理后台 - 登录': RouteRecordInfo<'管理后台 - 登录', '/admin/login', Record<never, never>, Record<never, never>>,
     '/test/test': RouteRecordInfo<'/test/test', '/test/test', Record<never, never>, Record<never, never>>,
   }
 }
