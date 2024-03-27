@@ -37,5 +37,6 @@ declare const classNames: typeof globalClassNames & {
   readonly easeOutCirc: 'easeOutCirc';
   readonly screenSm: 'screenSm';
   readonly boxShadow: 'boxShadow';
+  readonly boxShadow2: 'boxShadow2';
 };
 export = classNames;

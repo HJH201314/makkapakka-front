@@ -41,7 +41,7 @@ function handleInput(e: any) {
   width: 100%;
   box-sizing: border-box;
   border-radius: .5rem;
-  padding: .25rem .5rem;
+  padding: .5rem .5rem;
   transition: background-color .2s $ease-out-circ;
   background-color: $color-grey-100;
   &:focus {

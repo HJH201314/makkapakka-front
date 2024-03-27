@@ -7,6 +7,7 @@ import type { CommonModalFunc } from "../modal/CommonModal";
 import CusButton from "../button/CusButton.vue";
 import type { CommonDialogEmits, CommonDialogExpose, CommonDialogProps } from "./CommonDialog";
 import { DialogManager } from "./index";
+import CusHr from '@/components/cus-ui/hr/CusHr.vue';
 
 const props = withDefaults(defineProps<CommonDialogProps>(), {
   title: ''
@@ -58,12 +59,12 @@ defineExpose<CommonDialogExpose>({
       <header>
         <div class="dialog-title">{{ title }}</div>
       </header>
-      <hr />
+      <cus-hr />
       <main>
         <div v-html="props.content"></div>
         <slot></slot>
       </main>
-      <hr />
+      <cus-hr />
       <footer>
         <cus-button text="取消" type="normal" @click="handleCancel" v-bind="props.cancelButtonProps" />
         <cus-button text="确认" type="primary" @click="handleConfirm" v-bind="props.confirmButtonProps" />

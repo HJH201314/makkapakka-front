@@ -1,7 +1,7 @@
-import type { ToastProps } from "./index";
+import type { CusToastProps } from "./CusToast";
 import type { App } from "vue";
 import { createApp, h } from "vue";
-import Toast from "./Toast.vue";
+import CusToast from "./CusToast.vue";
 
 /**
  * 使用ToastManager来创建令人心动的土司通知吧！
@@ -10,7 +10,7 @@ class ToastManager {
   static toastDiv?: HTMLDivElement = undefined;
   static app?: App = undefined;
 
-  static show(props: ToastProps) {
+  static show(props: CusToastProps) {
     if (!this.toastDiv) {
       this.toastDiv = document.createElement('div');
       document.querySelector('#app')?.appendChild(this.toastDiv);
@@ -19,24 +19,24 @@ class ToastManager {
     }
     this.app = createApp({
       render() {
-        return h(Toast, props);
+        return h(CusToast, props);
       }
     });
     this.app.mount(this.toastDiv);
   }
-  static success(text: string, options?: ToastProps) {
+  static success(text: string, options?: CusToastProps) {
     this.show({...options, text, type: 'success'});
   }
-  static danger(text: string, options?: ToastProps) {
+  static danger(text: string, options?: CusToastProps) {
     this.show({...options, text, type: 'danger'});
   }
-  static info(text: string, options?: ToastProps) {
+  static info(text: string, options?: CusToastProps) {
     this.show({...options, text, type: 'info'});
   }
-  static normal(text: string, options?: ToastProps) {
+  static normal(text: string, options?: CusToastProps) {
     this.show({...options, text, type: 'normal'});
   }
-  static warning(text: string, options?: ToastProps) {
+  static warning(text: string, options?: CusToastProps) {
     this.show({...options, text, type: 'warning'});
   }
 }

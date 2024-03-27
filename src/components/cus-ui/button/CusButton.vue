@@ -18,7 +18,7 @@ const buttonRef = ref<HTMLButtonElement>();
 const buttonStyle = computed(() => {
   const calcStyle: CSSProperties = {
     'box-shadow': props.shadow ? variables.boxShadow : 'none',
-    'padding': props.text ? '.25rem 1rem' : '.25rem',
+    'padding': props.text ? '.5rem 1rem' : '.5rem',
     ...props.buttonStyle
   };
   return calcStyle;
