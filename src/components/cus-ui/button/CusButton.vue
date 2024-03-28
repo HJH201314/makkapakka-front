@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import variables from "@/assets/variables.module.scss";
-import type { CSSProperties } from "vue";
-import { computed, ref } from "vue";
-import { getDarkerColor } from "@/utils/color";
+import variables from '@/assets/variables.module.scss';
+import type { CSSProperties } from 'vue';
+import { computed, ref } from 'vue';
+import { getDarkerColor } from '@/utils/color';
 import type { CusButtonEmits, CusButtonProps } from './CusButton';
 
 const props = withDefaults(defineProps<CusButtonProps>(), {
-  text: "",
-  type: "normal",
+  text: '',
+  type: 'normal',
   shadow: false,
 });
 
@@ -18,7 +18,8 @@ const buttonRef = ref<HTMLButtonElement>();
 const buttonStyle = computed(() => {
   const calcStyle: CSSProperties = {
     'box-shadow': props.shadow ? variables.boxShadow : 'none',
-    'padding': props.text ? '.5rem 1rem' : '.5rem',
+    'padding': props.text ? '8px 16px' : '8px',
+    'border-radius': '8px',
     ...props.buttonStyle
   };
   return calcStyle;
@@ -61,59 +62,48 @@ function handleClick() {
 </script>
 
 <template>
-  <div class="dili-button" @click="handleClick">
-    <button ref="buttonRef" :style="buttonStyle" :class="{'disabled': props.disabled}">
-      <slot></slot>
-      <span class="button-text" v-if="props.text">{{ props.text }}</span>
-    </button>
-    <div class="mask" :class="{'disabled': props.disabled}">
-
-    </div>
-  </div>
+  <button class="cus-button" ref="buttonRef" :style="buttonStyle" @click="handleClick"
+          :class="{'disabled': props.disabled}">
+    <slot></slot>
+    <span class="button-text" v-if="props.text">{{ props.text }}</span>
+  </button>
 </template>
 
 <style scoped lang="scss">
 @import "@/assets/variables.module";
-.dili-button {
+.cus-button {
   position: relative;
-  > .mask {
-    position: absolute;
+  outline: none;
+  transition: background-color .25s $ease-out-circ, color .25s $ease-out-circ;
+  background-color: v-bind(backgroundColor);
+  border: 1px solid v-bind(backgroundColor);
+  color: v-bind(fontColor);
+  overflow: hidden;
+  white-space: pre;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 
-  }
-  > button {
-    outline: none;
-    border-radius: .5rem;
-    transition: background-color .2s $ease-out-circ, color .2s $ease-out-circ;
-    background-color: v-bind(backgroundColor);
-    border: 1px solid v-bind(backgroundColor);
-    color: v-bind(fontColor);
-    overflow: hidden;
-    white-space: pre;
-    display: flex;
-    gap: .5rem;
-    align-items: center;
-    justify-content: center;
-
-    &.disabled {
-      //background-color: $color-grey-200;
-      //color: $color-grey-500;
-      filter: grayscale(0.5) opacity(0.5);
-      cursor: not-allowed;
-    }
-
-    &:not(&.disabled):hover {
-      cursor: pointer;
-      background-color: v-bind(hoverBackgroundColor);
-      color: v-bind(hoverFontColor);
-      border: 1px solid v-bind(hoverBackgroundColor);
-    }
-
-    &:not(&.disabled):active {
-      background-color: v-bind(activeBackgroundColor);
-      color: v-bind(activeFontColor);
-      border: 1px solid v-bind(activeBackgroundColor);
-    }
+  &.disabled {
+    //background-color: $color-grey-200;
+    //color: $color-grey-500;
+    filter: grayscale(0.5) opacity(0.5);
+    cursor: not-allowed;
   }
 
+  &:not(&.disabled):hover {
+    cursor: pointer;
+    background-color: v-bind(hoverBackgroundColor);
+    color: v-bind(hoverFontColor);
+    //border: 1px solid v-bind(hoverBackgroundColor);
+  }
+
+  &:not(&.disabled):active {
+    background-color: v-bind(activeBackgroundColor);
+    color: v-bind(activeFontColor);
+    border: 1px solid v-bind(activeBackgroundColor);
+  }
 }
 </style>
