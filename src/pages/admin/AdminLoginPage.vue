@@ -24,11 +24,10 @@ const formState = reactive<FormState>({
   remember: false,
 });
 
+const router = useRouter();
 function handleSubmit() {
-  DialogManager.commonDialog({
-    title: '1'
-  });
-  ToastManager.normal('hello');
+  ToastManager.normal('Hello, MakkaPakka');
+  router.replace('/admin/home');
 }
 </script>
 

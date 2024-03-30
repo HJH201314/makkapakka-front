@@ -22,6 +22,15 @@ const buttonStyle = computed(() => {
     'border-radius': '8px',
     ...props.buttonStyle
   };
+  // 背景颜色
+  if (props.alwaysHover) {
+    calcStyle.backgroundColor = hoverBackgroundColor.value;
+    calcStyle.color = hoverFontColor.value;
+  }
+  if (props.alwaysActive) {
+    calcStyle.backgroundColor = activeBackgroundColor.value;
+    calcStyle.color = activeFontColor.value;
+  }
   return calcStyle;
 });
 
@@ -33,7 +42,7 @@ const backgroundColor = computed(() => {
   }
 });
 const hoverBackgroundColor = computed(() => {
-  return getDarkerColor(backgroundColor.value, 0.1);
+  return getDarkerColor(backgroundColor.value, 0.05);
 });
 const activeBackgroundColor = computed(() => {
   return getDarkerColor(backgroundColor.value, 0.2);
@@ -48,7 +57,7 @@ const fontColor = computed(() => {
   }
 });
 const hoverFontColor = computed(() => {
-  return getDarkerColor(fontColor.value, 0.1);
+  return getDarkerColor(fontColor.value, 0.05);
 });
 const activeFontColor = computed(() => {
   return getDarkerColor(fontColor.value, 0.2);
@@ -74,7 +83,7 @@ function handleClick() {
 .cus-button {
   position: relative;
   outline: none;
-  transition: background-color .25s $ease-out-circ, color .25s $ease-out-circ;
+  transition: background-color .25s ease-in-out, color .25s ease-in-out;
   background-color: v-bind(backgroundColor);
   border: 1px solid v-bind(backgroundColor);
   color: v-bind(fontColor);
@@ -103,7 +112,7 @@ function handleClick() {
   &:not(&.disabled):active {
     background-color: v-bind(activeBackgroundColor);
     color: v-bind(activeFontColor);
-    border: 1px solid v-bind(activeBackgroundColor);
+    //border: 1px solid v-bind(activeBackgroundColor);
   }
 }
 </style>

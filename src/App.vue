@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import variables from '@/assets/variables.module.scss';
+import AdminLayout from '@/layouts/AdminLayout.vue';
+
+const route = useRoute();
 </script>
 
 <template>
@@ -9,7 +12,14 @@ import variables from '@/assets/variables.module.scss';
       colorPrimary: variables.colorPrimary
     }
   }">
-    <router-view v-slot="{ Component }">
+    <router-view v-if="route.path.match(/^\/admin\/(?!login).*$/)" v-slot="{ Component }">
+      <admin-layout>
+        <transition>
+          <component :is="Component"></component>
+        </transition>
+      </admin-layout>
+    </router-view>
+    <router-view v-else v-slot="{ Component }">
       <transition>
         <component :is="Component"></component>
       </transition>
@@ -18,10 +28,4 @@ import variables from '@/assets/variables.module.scss';
 </template>
 
 <style lang="scss">
-@import "@/assets/main";
-#app {
-  position: relative;
-  height: 100dvh;
-  width: 100dvw;
-}
 </style>

@@ -17,8 +17,8 @@ const styles = computed(() => {
 
 <template>
   <div class="cus-card" :style="styles">
-    <div v-if="title">{{ title }}</div>
-    <cus-hr v-if="title && $slots.default"  />
+    <div v-if="title" class="title">{{ title }}</div>
+<!--    <cus-hr v-if="title && $slots.default"  />-->
     <slot name="default"></slot>
   </div>
 </template>
@@ -30,5 +30,9 @@ const styles = computed(() => {
   box-sizing: border-box;
   padding: 1rem;
   border-radius: .5rem;
+
+  .title {
+    margin-bottom: 8px;
+  }
 }
 </style>

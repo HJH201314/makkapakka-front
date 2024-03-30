@@ -9,6 +9,9 @@ export interface CusButtonProps {
   shadow?: boolean;
   disabled?: boolean;
 
+  alwaysHover?: boolean;
+  alwaysActive?: boolean;
+
   // 自定义样式
   buttonStyle?: CSSProperties;
 }
