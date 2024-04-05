@@ -30,11 +30,11 @@ $color-pink-300: #ffadd2;
 $color-pink-400: #ff85c0;
 $color-pink-500: #f759ab;
 
-$color-makka-500: #fbc96c;
-$color-makka-400: #f9c56a;
-$color-makka-300: #fbd38f;
-$color-makka-200: #fce2b5;
-$color-makka-100: #fef0da;
+$color-makka-500: #ffc656;
+$color-makka-400: #ffd178;
+$color-makka-300: #ffdd9a;
+$color-makka-200: #ffe8bb;
+$color-makka-100: #fff4dd;
 
 $color-success: #1dd1a1;
 $color-info: #42a5f5;
@@ -44,8 +44,8 @@ $color-danger: #ef5350;
 $color-hover: $color-grey-300;
 $color-active: $color-grey-400;
 $color-primary-lighter: $color-makka-200;
-$color-primary: $color-makka-400;
-$color-primary-darker: $color-makka-500;
+$color-primary: $color-makka-500;
+$color-primary-darker: darken($color-makka-500, 0.2);
 $color-secondary-lighter: $color-pink-200;
 $color-secondary: $color-pink-400;
 $color-secondary-darker: $color-pink-500;

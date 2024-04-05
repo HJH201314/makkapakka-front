@@ -40,7 +40,7 @@ function handleSubmit() {
         <cus-input placeholder="邮箱" />
         <cus-input placeholder="密码" type="password" />
         <cus-toggle label="记住我" />
-        <cus-button @click="handleSubmit" :button-style="{ width: '100%' }" type="primary" text="登录" />
+        <cus-button @click="handleSubmit" :button-style="{ width: '100%' }" type="primary">登录</cus-button>
       </cus-space>
     </cus-card>
   </align-center-layout>

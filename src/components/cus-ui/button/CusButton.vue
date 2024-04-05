@@ -1,15 +1,27 @@
 <script setup lang="ts">
-import variables from '@/assets/variables.module.scss';
+import variables from '../assets/variables.module.scss';
 import type { CSSProperties } from 'vue';
 import { computed, ref } from 'vue';
-import { getDarkerColor } from '@/utils/color';
 import type { CusButtonEmits, CusButtonProps } from './CusButton';
+import { CusColor } from '../utils/color.util';
+import { useConfigProvider } from '../config-provider/CusConfigProvider';
+
+const { theme } = useConfigProvider();
 
 const props = withDefaults(defineProps<CusButtonProps>(), {
   text: '',
-  type: 'normal',
-  shadow: false,
+  type: 'default',
+  primary: true,
+  shadow: false
 });
+
+const producedProps = computed(() => ({
+  ...props,
+  primary: props.primary && !props.secondary && !props.tertiary && !props.quaternary,
+  secondary: props.secondary && !props.tertiary && !props.quaternary,
+  tertiary: props.tertiary && !props.quaternary,
+  quaternary: props.quaternary,
+}));
 
 const emit = defineEmits<CusButtonEmits>();
 
@@ -20,6 +32,7 @@ const buttonStyle = computed(() => {
     'box-shadow': props.shadow ? variables.boxShadow : 'none',
     'padding': props.text ? '8px 16px' : '8px',
     'border-radius': '8px',
+    'font-weight': props.strong ? 'bold' : 'normal',
     ...props.buttonStyle
   };
   // 背景颜色
@@ -34,33 +47,55 @@ const buttonStyle = computed(() => {
   return calcStyle;
 });
 
-const backgroundColor = computed(() => {
-  if (props.type == 'primary') {
-    return props.backgroundColor || variables.colorPrimary;
-  } else {
-    return '#FFFFFF';
-  }
-});
-const hoverBackgroundColor = computed(() => {
-  return getDarkerColor(backgroundColor.value, 0.05);
-});
-const activeBackgroundColor = computed(() => {
-  return getDarkerColor(backgroundColor.value, 0.2);
+const color = computed(() => {
+  if (props.color) return props.color;
+  else if (props.type == 'primary') return theme.primaryColor || variables.cusColorPrimary;
+  else if (props.type == 'info') return variables.cusColorInfo;
+  else if (props.type == 'success') return variables.cusColorSuccess;
+  else if (props.type == 'warning') return variables.cusColorWarning;
+  else if (props.type == 'error') return variables.cusColorError;
+  else return variables.cusColorWhite;
 });
 
 const fontColor = computed(() => {
+  // 如果有自定义字体颜色，直接返回
   if (props.fontColor) return props.fontColor;
-  if (props.type == 'primary') {
-    return '#FFFFFF';
-  } else {
-    return variables.colorBlack;
+  if (props.type != 'default') {
+    // 主要按钮
+    if (producedProps.value.primary) return variables.cusColorWhite;
+    // 次/次次/次次次要按钮
+    else if (!producedProps.value.primary) return color.value;
   }
+  return variables.cusColorText;
 });
 const hoverFontColor = computed(() => {
-  return getDarkerColor(fontColor.value, 0.05);
+  if (producedProps.value.primary) {
+    const fontColorUtil = new CusColor(fontColor.value);
+    if (fontColorUtil.isDark()) return theme.primaryColor || variables.cusColorPrimary;
+    else return variables.cusColorWhite;
+  } else return fontColor.value;
 });
 const activeFontColor = computed(() => {
-  return getDarkerColor(fontColor.value, 0.2);
+  return hoverFontColor.value;
+});
+
+const backgroundColor = computed(() => {
+  const cusColor = new CusColor(color.value);
+  if (producedProps.value.quaternary) return variables.cusColorWhite;
+  else if (producedProps.value.tertiary) return variables.cusColorBackground;
+  else if (producedProps.value.secondary) return cusColor.subColor(CusColor.white, 10, 7).hexColor;
+  else if (producedProps.value.primary) return color.value;
+  else return variables.cusColorWhite;
+});
+const hoverBackgroundColor = computed(() => {
+  const hoverColorUtil = new CusColor(backgroundColor.value);
+  if (hoverColorUtil.isDark()) return hoverColorUtil.lighten(0.1).hexColor;
+  else return hoverColorUtil.darken(0.1).hexColor;
+});
+const activeBackgroundColor = computed(() => {
+  const hoverColorUtil = new CusColor(backgroundColor.value);
+  if (hoverColorUtil.isDark()) return hoverColorUtil.lighten(0.2).hexColor;
+  else return hoverColorUtil.darken(0.2).hexColor;
 });
 
 function handleClick() {
@@ -73,13 +108,14 @@ function handleClick() {
 <template>
   <button class="cus-button" ref="buttonRef" :style="buttonStyle" @click="handleClick"
           :class="{'disabled': props.disabled}">
+    <!-- 图标专用插槽 -->
+    <slot name="icon"></slot>
+    <!-- 按钮内容插槽 -->
     <slot></slot>
-    <span class="button-text" v-if="props.text">{{ props.text }}</span>
   </button>
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
 .cus-button {
   position: relative;
   outline: none;

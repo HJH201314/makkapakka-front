@@ -23,6 +23,7 @@ onMounted(() => {
 
 function doRouteJump(path: string) {
   router.push(path);
+  showSidebar.value = false;
 }
 
 function toggleSidebar() {
@@ -43,10 +44,11 @@ function handleLogout() {
       </div>
       <div class="menu" v-if="global.isLargeScreen">
         <cus-button v-for="page in adminPages" :key="page.path" shape="round" @click="() => doRouteJump(page.path)"
-                    :always-hover="route.path == page.path">
-          <component v-if="page.meta.menuIcon" :is="page.meta.menuIcon"
-                     :class="{ 'menu-icon__active': route.path == page.path }"></component>
-          <span :class="{ 'menu-icon__active': route.path == page.path }">{{ page.meta.menuTitle || page.name }}</span>
+                    :tertiary="route.path == page.path">
+          <template #icon>
+            <component v-if="page.meta.menuIcon" :is="page.meta.menuIcon"></component>
+          </template>
+          <span>{{ page.meta.menuTitle || page.name }}</span>
         </cus-button>
       </div>
       <div class="dropdown">
@@ -57,10 +59,9 @@ function handleLogout() {
     <cus-sidebar :visible="showSidebar" style="width: 200px; padding: 8px;">
       <div style="display: flex; flex-direction: column; gap: 8px;">
         <cus-button v-for="page in adminPages" :key="page.path" @click="() => doRouteJump(page.path)"
-                    :always-hover="route.path == page.path">
-          <component v-if="page.meta.menuIcon" :is="page.meta.menuIcon"
-                     :class="{ 'menu-icon__active': route.path == page.path }"></component>
-          <span :class="{ 'menu-icon__active': route.path == page.path }">{{ page.meta.menuTitle || page.name }}</span>
+                    :tertiary="route.path == page.path">
+          <component v-if="page.meta.menuIcon" :is="page.meta.menuIcon"></component>
+          <span>{{ page.meta.menuTitle || page.name }}</span>
         </cus-button>
       </div>
     </cus-sidebar>

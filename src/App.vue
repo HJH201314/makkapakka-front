@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router';
 import variables from '@/assets/variables.module.scss';
 import AdminLayout from '@/layouts/AdminLayout.vue';
+import CusConfigProvider from '@/components/cus-ui/config-provider/CusConfigProvider';
 
 const route = useRoute();
 </script>
@@ -12,18 +13,20 @@ const route = useRoute();
       colorPrimary: variables.colorPrimary
     }
   }">
-    <router-view v-if="route.path.match(/^\/admin\/(?!login).*$/)" v-slot="{ Component }">
-      <admin-layout>
+    <cus-config-provider :theme="{ primaryColor: variables.colorPrimary }">
+      <router-view v-if="route.path.match(/^\/admin\/(?!login).*$/)" v-slot="{ Component }">
+          <admin-layout>
+            <transition>
+              <component :is="Component"></component>
+            </transition>
+          </admin-layout>
+      </router-view>
+      <router-view v-else v-slot="{ Component }">
         <transition>
           <component :is="Component"></component>
         </transition>
-      </admin-layout>
-    </router-view>
-    <router-view v-else v-slot="{ Component }">
-      <transition>
-        <component :is="Component"></component>
-      </transition>
-    </router-view>
+      </router-view>
+    </cus-config-provider>
   </a-config-provider>
 </template>
 
