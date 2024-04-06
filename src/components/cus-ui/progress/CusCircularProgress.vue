@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, type CSSProperties, ref, watch } from 'vue';
-import variables from "@/assets/variables.module.scss";
-import { TransitionPresets, useTransition } from "@vueuse/core";
+import { TransitionPresets, useTransition } from '@vueuse/core';
+import variables from '@/assets/variables.module.scss';
 
 type CircularProgressProps = {
   value?: number;
@@ -22,11 +22,14 @@ const props = withDefaults(defineProps<CircularProgressProps>(), {
 
 const progress = ref(props.value);
 
-watch(() => props.value, (newValue, oldValue) => {
-  if (newValue != undefined && newValue !== oldValue) {
-    progress.value = newValue;
+watch(
+  () => props.value,
+  (newValue, oldValue) => {
+    if (newValue != undefined && newValue !== oldValue) {
+      progress.value = newValue;
+    }
   }
-});
+);
 
 const transitionProgress = useTransition(progress, {
   duration: 200,
@@ -34,19 +37,17 @@ const transitionProgress = useTransition(progress, {
 });
 
 // 根据进度计算样式
-const progressStyle = computed(() => {
-  return {
-    background: `conic-gradient(${props.foregroundColor} 0, ${props.foregroundColor} ${transitionProgress.value}%, ${props.backgroundColor} ${transitionProgress.value + 1}%, ${props.backgroundColor})`,
-    ...props.barStyle,
-  };
-});
-
+const progressStyle = computed(() => ({
+  background: `conic-gradient(${props.foregroundColor} 0, ${props.foregroundColor} ${
+    transitionProgress.value
+  }%, ${props.backgroundColor} ${transitionProgress.value + 1}%, ${props.backgroundColor})`,
+  ...props.barStyle,
+}));
 </script>
 
 <template>
   <div class="circular-progress">
-    <div class="progress-bar" :style="progressStyle">
-    </div>
+    <div class="progress-bar" :style="progressStyle"></div>
     <div class="slot">
       <slot></slot>
     </div>
@@ -54,7 +55,7 @@ const progressStyle = computed(() => {
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
+@import '@/assets/variables.module';
 .circular-progress {
   position: relative;
   width: v-bind(size);

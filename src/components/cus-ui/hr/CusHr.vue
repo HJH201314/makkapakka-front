@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import type { CusHrProps } from './CusHr';
 
-const props = withDefaults(defineProps<CusHrProps>(), {
-
-});
+const props = withDefaults(defineProps<CusHrProps>(), {});
 </script>
 
 <template>
@@ -15,7 +13,7 @@ const props = withDefaults(defineProps<CusHrProps>(), {
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
+@import '@/assets/variables.module';
 .cus-hr {
   height: 1rem;
   width: 100%;

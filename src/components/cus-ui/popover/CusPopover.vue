@@ -38,7 +38,7 @@ function show() {
         positionTop = trigger.offsetTop - popover.offsetHeight - 2;
         break;
       case 'left':
-        positionLeft = - popover.offsetWidth - 2;
+        positionLeft = -popover.offsetWidth - 2;
         positionTop = trigger.offsetTop + trigger.offsetHeight / 2 - popover.offsetHeight / 2;
         break;
       case 'right':
@@ -50,8 +50,8 @@ function show() {
         positionTop = trigger.offsetTop + trigger.offsetHeight + 2;
         break;
     }
-    refPopover.value!.style.top = positionTop + 'px';
-    refPopover.value!.style.left = positionLeft + 'px';
+    refPopover.value!.style.top = `${positionTop}px`;
+    refPopover.value!.style.left = `${positionLeft}px`;
   });
   // 设置定时，如果超出时间，则尝试关闭popover
   clearInterval(closeInterval.value);
@@ -74,10 +74,17 @@ function hide(e?: MouseEvent) {
   // useMouseInElement的结果有延迟，一个nextTick似乎避免不了
   // 因此如果有事件传进来，以事件中offsetX/offsetY的为准
   // 下方判断加等号是因为，事件传递过来的offset有可能等于宽度或高度
-  const isOutsideByEvent = !e ? false :
-    (e.offsetX <= 0 || e.offsetX >= mouseInBase.elementWidth.value || e.offsetY <= 0 || e.offsetY >= mouseInBase.elementHeight.value)
-    && (e.offsetX <= 0 || e.offsetX >= mouseInPopover.elementWidth.value || e.offsetY <= 0 || e.offsetY >= mouseInPopover.elementHeight.value);
-  if (isOutsideByEvent || mouseInBase.isOutside.value && mouseInPopover.isOutside.value) {
+  const isOutsideByEvent = !e
+    ? false
+    : (e.offsetX <= 0 ||
+        e.offsetX >= mouseInBase.elementWidth.value ||
+        e.offsetY <= 0 ||
+        e.offsetY >= mouseInBase.elementHeight.value) &&
+      (e.offsetX <= 0 ||
+        e.offsetX >= mouseInPopover.elementWidth.value ||
+        e.offsetY <= 0 ||
+        e.offsetY >= mouseInPopover.elementHeight.value);
+  if (isOutsideByEvent || (mouseInBase.isOutside.value && mouseInPopover.isOutside.value)) {
     showPopover.value = false;
     clearInterval(closeInterval.value);
   }
@@ -90,7 +97,13 @@ function hide(e?: MouseEvent) {
       <slot name="body" />
     </span>
     <Transition>
-      <div v-show="showPopover || props.alwaysShow" class="popover-slot" ref="refPopover" role="tooltip" @mouseleave="hide">
+      <div
+        v-show="showPopover || props.alwaysShow"
+        class="popover-slot"
+        ref="refPopover"
+        role="tooltip"
+        @mouseleave="hide"
+      >
         <slot name="popover" />
       </div>
     </Transition>
@@ -98,13 +111,13 @@ function hide(e?: MouseEvent) {
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
+@import '@/assets/variables.module';
 .popover {
   position: relative;
   &-slot {
     position: absolute;
-    padding: .25rem .5rem;
-    border-radius: .5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
     background-color: transparent;
     z-index: 999;
     opacity: 0.9;

@@ -5,7 +5,6 @@ import CusToggle from '@/components/cus-ui/toggle/CusToggle.vue';
 import CusButton from '@/components/cus-ui/button/CusButton.vue';
 import CusSpace from '@/components/cus-ui/space/CusSpace.vue';
 import CusCard from '@/components/cus-ui/card/CusCard.vue';
-import { DialogManager } from '@/components/cus-ui/dialog';
 import ToastManager from '@/components/cus-ui/toast/ToastManager';
 
 definePage({
@@ -37,17 +36,23 @@ function handleSubmit() {
     <cus-card class="card">
       <h1>登录</h1>
       <cus-space direction="vertical">
-        <cus-input placeholder="邮箱" />
-        <cus-input placeholder="密码" type="password" />
+        <cus-input
+          placeholder="邮箱"
+          :value="formState.email"
+          @change="(value) => (formState.email = value)"
+        />
+        <cus-input placeholder="密码" type="password" v-model="formState.password" />
         <cus-toggle label="记住我" />
-        <cus-button @click="handleSubmit" :button-style="{ width: '100%' }" type="primary">登录</cus-button>
+        <cus-button @click="handleSubmit" :button-style="{ width: '100%' }" type="primary"
+          >登录</cus-button
+        >
       </cus-space>
     </cus-card>
   </align-center-layout>
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/main";
+@import '@/assets/main';
 .admin-login-page {
   background: linear-gradient(to right bottom, $color-makka-300, $color-makka-100);
   //background-color: $color-primary-lighter;
@@ -60,11 +65,17 @@ function handleSubmit() {
     name: show-right;
     duration: 1s;
     fill-mode: both;
-  };
+  }
   @keyframes show-right {
-    0% { transform: translateX(100%); }
-    40% { transform: translateX(-10%); }
-    100% { transform: translateX(0); }
+    0% {
+      transform: translateX(100%);
+    }
+    40% {
+      transform: translateX(-10%);
+    }
+    100% {
+      transform: translateX(0);
+    }
   }
 }
 .logo-text {
@@ -79,9 +90,15 @@ function handleSubmit() {
   animation: show-left 1s;
   text-shadow: 5px 5px 15px $color-primary-darker;
   @keyframes show-left {
-    0% { transform: translateX(-100%); }
-    40% { transform: translateX(10%); }
-    100% { transform: translateX(0); }
+    0% {
+      transform: translateX(-100%);
+    }
+    40% {
+      transform: translateX(10%);
+    }
+    100% {
+      transform: translateX(0);
+    }
   }
 }
 </style>

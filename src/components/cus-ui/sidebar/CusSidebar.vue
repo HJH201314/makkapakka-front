@@ -23,12 +23,16 @@ const emit = defineEmits<{
 const showModal = ref(false);
 
 /* 观测visibility，可以通过切换visibility切换展示状态 */
-watch(() => props.visible, (v) => {
-  // nextTick才真正改变可视，能够让props.visible从一开始就为true时也展示动画
-  nextTick(() => {
-    showModal.value = v;
-  });
-}, { immediate: true });
+watch(
+  () => props.visible,
+  (v) => {
+    // nextTick才真正改变可视，能够让props.visible从一开始就为true时也展示动画
+    nextTick(() => {
+      showModal.value = v;
+    });
+  },
+  { immediate: true }
+);
 
 /* 展示模态框（暴露的方法，配合ref使用） */
 function open() {
@@ -40,11 +44,14 @@ function close() {
   showModal.value = false;
 }
 
-watch(() => showModal.value, (newVal, oldVal) => {
-  if (newVal != oldVal) {
-    emit('update:visible', newVal);
+watch(
+  () => showModal.value,
+  (newVal, oldVal) => {
+    if (newVal != oldVal) {
+      emit('update:visible', newVal);
+    }
   }
-});
+);
 
 function handleMaskClick() {
   handleClose();
@@ -57,14 +64,14 @@ function handleClose() {
 
 /* 阻止透传到根节点 */
 defineOptions({
-  inheritAttrs: false
+  inheritAttrs: false,
 });
 
 /* 暴露接口 */
 defineExpose<CusSidebarFunc>({
   open,
   close,
-  isVisible: toRef(showModal)
+  isVisible: toRef(showModal),
 });
 </script>
 
@@ -90,7 +97,7 @@ defineExpose<CusSidebarFunc>({
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
+@import '@/assets/variables.module';
 
 .modal {
   visibility: unset;
@@ -102,7 +109,7 @@ defineExpose<CusSidebarFunc>({
     right: 0;
     bottom: 0;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, 0.5);
   }
 
   &-body {
@@ -113,7 +120,7 @@ defineExpose<CusSidebarFunc>({
     max-width: calc(100% - 2rem);
     z-index: 1001;
     background-color: $color-white;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, .1);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
     //display: flex; // 由于&-content是由内容撑起来的，这里设置为flex，能够让子元素撑起并占满&-body
     //flex-direction: column;
     overflow: hidden;
@@ -136,7 +143,7 @@ defineExpose<CusSidebarFunc>({
 .show-enter-active,
 .show-leave-active {
   z-index: 999;
-  transition: opacity .2s $ease-out-circ;
+  transition: opacity 0.2s $ease-out-circ;
 }
 
 .show-enter-from,

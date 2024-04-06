@@ -22,7 +22,8 @@ const props = withDefaults(defineProps<CusSpinningProps>(), {
 }
 
 @keyframes spinning-scale {
-  0%, 100% {
+  0%,
+  100% {
     scale: 1;
   }
   50% {
@@ -37,7 +38,8 @@ const props = withDefaults(defineProps<CusSpinningProps>(), {
   border: v-bind(thickness) solid v-bind(color);
   border-top: 2px solid transparent;
   border-radius: 50%;
-  animation: spinning-rotate 1.5s linear infinite, spinning-scale 1.5s $ease-out-circ infinite;
+  animation:
+    spinning-rotate 1.5s linear infinite,
+    spinning-scale 1.5s $ease-out-circ infinite;
 }
-
 </style>

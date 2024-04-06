@@ -8,18 +8,20 @@ const route = useRoute();
 </script>
 
 <template>
-  <a-config-provider :theme="{
-    token: {
-      colorPrimary: variables.colorPrimary
-    }
-  }">
+  <a-config-provider
+    :theme="{
+      token: {
+        colorPrimary: variables.colorPrimary,
+      },
+    }"
+  >
     <cus-config-provider :theme="{ primaryColor: variables.colorPrimary }">
-      <router-view v-if="route.path.match(/^\/admin\/(?!login).*$/)" v-slot="{ Component }">
-          <admin-layout>
-            <transition>
-              <component :is="Component"></component>
-            </transition>
-          </admin-layout>
+      <router-view v-if="route.path.match(/^(\/|\/admin\/(?!login)).*$/)" v-slot="{ Component }">
+        <admin-layout>
+          <transition>
+            <component :is="Component"></component>
+          </transition>
+        </admin-layout>
       </router-view>
       <router-view v-else v-slot="{ Component }">
         <transition>
@@ -30,5 +32,4 @@ const route = useRoute();
   </a-config-provider>
 </template>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

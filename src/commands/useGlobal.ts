@@ -1,6 +1,6 @@
 // 自定义组合函数，用于获取一些全局信息
-import { useMediaQuery } from "@vueuse/core";
-import { reactive, toRef } from "vue";
+import { useMediaQuery } from '@vueuse/core';
+import { reactive, toRef } from 'vue';
 
 function useGlobal() {
   const isLargeScreen = useMediaQuery('(min-width: 768px)');

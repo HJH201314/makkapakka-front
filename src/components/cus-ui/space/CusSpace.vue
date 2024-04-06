@@ -1,21 +1,20 @@
 <script setup lang="ts">
-import type { CusSpaceProps } from './CusSpace';
 import type { CSSProperties } from 'vue';
+import type { CusSpaceProps } from './CusSpace';
 
 const props = withDefaults(defineProps<CusSpaceProps>(), {
   direction: 'row',
-  gap: '1rem'
+  gap: '1rem',
 });
 
-const styles = computed(() => {
-  return {
-    flexDirection:
-      (props.direction == 'vertical' || props.direction == 'column')
-        ? 'column'
-        : 'row',
-    gap: props.gap
-  } as CSSProperties;
-});
+const styles = computed(
+  () =>
+    ({
+      flexDirection:
+        props.direction == 'vertical' || props.direction == 'column' ? 'column' : 'row',
+      gap: props.gap,
+    }) as CSSProperties
+);
 </script>
 
 <template>

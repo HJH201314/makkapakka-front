@@ -1,16 +1,15 @@
 <!-- 基于Modal的基础对话框组件 -->
 <script setup lang="ts">
-
-import CommonModal from "../modal/CommonModal.vue";
-import { ref } from "vue";
-import type { CommonModalFunc } from "../modal/CommonModal";
-import CusButton from "../button/CusButton.vue";
-import type { CommonDialogEmits, CommonDialogExpose, CommonDialogProps } from "./CommonDialog";
-import { DialogManager } from "./index";
+import { ref } from 'vue';
 import CusHr from '@/components/cus-ui/hr/CusHr.vue';
+import CommonModal from '../modal/CommonModal.vue';
+import type { CommonModalFunc } from '../modal/CommonModal';
+import CusButton from '../button/CusButton.vue';
+import type { CommonDialogEmits, CommonDialogExpose, CommonDialogProps } from './CommonDialog';
+import { DialogManager } from './index';
 
 const props = withDefaults(defineProps<CommonDialogProps>(), {
-  title: ''
+  title: '',
 });
 
 const emits = defineEmits<CommonDialogEmits>();
@@ -32,7 +31,7 @@ function close() {
 function handleConfirm() {
   if (props.onConfirm) {
     props.onConfirm(close);
-    emits("onConfirm", close); // 传递关闭回调函数
+    emits('onConfirm', close); // 传递关闭回调函数
   } else {
     close(); // 不存在回调函数时默认自动关闭
   }
@@ -41,7 +40,7 @@ function handleConfirm() {
 function handleCancel() {
   if (props.onCancel) {
     props.onCancel(close);
-    emits("onCancel", close); // 传递关闭回调函数
+    emits('onCancel', close); // 传递关闭回调函数
   } else {
     close(); // 不存在回调函数时默认自动关闭
   }
@@ -54,7 +53,11 @@ defineExpose<CommonDialogExpose>({
 </script>
 
 <template>
-  <CommonModal :modal-style="{ 'background-color': 'white', ...props.modalStyle }" ref="modalRef" :show-close="false">
+  <CommonModal
+    :modal-style="{ 'background-color': 'white', ...props.modalStyle }"
+    ref="modalRef"
+    :show-close="false"
+  >
     <div class="dialog">
       <header>
         <div class="dialog-title">{{ title }}</div>
@@ -66,8 +69,18 @@ defineExpose<CommonDialogExpose>({
       </main>
       <cus-hr />
       <footer>
-        <cus-button text="取消" type="normal" @click="handleCancel" v-bind="props.cancelButtonProps" />
-        <cus-button text="确认" type="primary" @click="handleConfirm" v-bind="props.confirmButtonProps" />
+        <cus-button
+          text="取消"
+          type="normal"
+          @click="handleCancel"
+          v-bind="props.cancelButtonProps"
+        />
+        <cus-button
+          text="确认"
+          type="primary"
+          @click="handleConfirm"
+          v-bind="props.confirmButtonProps"
+        />
       </footer>
     </div>
   </CommonModal>
@@ -76,22 +89,21 @@ defineExpose<CommonDialogExpose>({
 <style scoped lang="scss">
 .dialog {
   width: 100%;
-  padding: .25rem .5rem .5rem .5rem;
+  padding: 0.25rem 0.5rem 0.5rem 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: 0.5rem;
 
   > header {
-
   }
   > main {
-    padding: 0 .5rem;
+    padding: 0 0.5rem;
   }
   > footer {
     width: 100%;
     display: flex;
     justify-content: flex-end;
-    gap: .5rem;
+    gap: 0.5rem;
   }
   &-title {
     font-weight: bold;

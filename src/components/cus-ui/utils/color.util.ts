@@ -17,7 +17,9 @@ export type ColorType = string | RGBColor | HSLColor;
 
 export class CusColor {
   static white = new CusColor('#fff');
+
   static black = new CusColor('#000');
+
   rgbColor: RGBColor;
 
   constructor(color: ColorType) {
@@ -33,6 +35,7 @@ export class CusColor {
   get hexColor() {
     return this.RGBToHex(this.rgbColor);
   }
+
   get hslColor() {
     return this.RGBToHSL(this.rgbColor);
   }
@@ -55,19 +58,12 @@ export class CusColor {
     const hexG = G.toString(16).padStart(2, '0');
     const hexB = B.toString(16).padStart(2, '0');
 
-    return '#' + hexR + hexG + hexB;
+    return `#${hexR}${hexG}${hexB}`;
   }
 
   stringToRGB(color: string) {
     if (color.length === 4) {
-      color =
-        color[0] +
-        color[1] +
-        color[1] +
-        color[2] +
-        color[2] +
-        color[3] +
-        color[3];
+      color = color[0] + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
     }
 
     const R = Number.parseInt(color.substring(1, 3), 16);
@@ -88,27 +84,27 @@ export class CusColor {
     let R = 0;
     let G = 0;
     let B = 0;
-    if (0 <= H && H < 60) {
+    if (H >= 0 && H < 60) {
       R = C;
       G = X;
       B = 0;
-    } else if (60 <= H && H < 120) {
+    } else if (H >= 60 && H < 120) {
       R = X;
       G = C;
       B = 0;
-    } else if (120 <= H && H < 180) {
+    } else if (H >= 120 && H < 180) {
       R = 0;
       G = C;
       B = X;
-    } else if (180 <= H && H < 240) {
+    } else if (H >= 180 && H < 240) {
       R = 0;
       G = X;
       B = C;
-    } else if (240 <= H && H < 300) {
+    } else if (H >= 240 && H < 300) {
       R = X;
       G = 0;
       B = C;
-    } else if (300 <= H && H < 360) {
+    } else if (H >= 300 && H < 360) {
       R = C;
       G = 0;
       B = X;
@@ -129,7 +125,9 @@ export class CusColor {
     const cmin = Math.min(R, G, B);
     const cmax = Math.max(R, G, B);
     const delta = cmax - cmin;
-    let H, S, L;
+    let H;
+    let S;
+    let L;
 
     if (delta === 0) {
       H = 0;
@@ -180,11 +178,9 @@ export class CusColor {
   luminance(rgbColor = this.rgbColor) {
     // ref https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
     let { R, G, B } = rgbColor;
-    [R, G, B] = [R, G, B].map(color => {
-      color = color / 255;
-      return color <= 0.03928
-        ? color / 12.92
-        : Math.pow((color + 0.055) / 1.055, 2.4);
+    [R, G, B] = [R, G, B].map((color) => {
+      color /= 255;
+      return color <= 0.03928 ? color / 12.92 : ((color + 0.055) / 1.055) ** 2.4;
     });
     return 0.2126 * R + 0.7152 * G + 0.0722 * B;
   }
@@ -220,9 +216,8 @@ export class CusColor {
   textColor() {
     if (this.isLight()) {
       return CusColor.black;
-    } else {
-      return CusColor.white;
     }
+    return CusColor.white;
   }
 
   /**
@@ -239,7 +234,7 @@ export class CusColor {
         new CusColor({
           R: fromColor.R + stepR * i,
           G: fromColor.G + stepG * i,
-          B: fromColor.B + stepB * i
+          B: fromColor.B + stepB * i,
         })
       );
     }

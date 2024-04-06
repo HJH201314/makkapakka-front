@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { MenuUnfoldOne, MenuFoldOne, ApplicationMenu, Close } from '@icon-park/vue-next';
+import { ApplicationMenu } from '@icon-park/vue-next';
 import CusButton from '@/components/cus-ui/button/CusButton.vue';
-import CusLink from '@/components/cus-ui/link/CusLink.vue';
-import useGlobal from '@/commands/useGlobal';
 import CusSidebar from '@/components/cus-ui/sidebar/CusSidebar.vue';
-import variables from '@/assets/variables.module.scss';
+import useGlobal from '@/commands/useGlobal';
 import { useUserStore } from '@/stores/useUserStore';
 
 const route = useRoute();
@@ -13,9 +11,9 @@ const global = useGlobal();
 const userStore = useUserStore();
 const showSidebar = ref(false);
 
-const adminPages = computed(() => {
-  return router.getRoutes().filter(v => v.path.startsWith('/admin/') && v.meta.showInMenu);
-});
+const adminPages = computed(() =>
+  router.getRoutes().filter((v) => v.path.startsWith('/admin/') && v.meta.showInMenu)
+);
 
 onMounted(() => {
   console.log(router.getRoutes());
@@ -38,13 +36,24 @@ function handleLogout() {
 <template>
   <div class="layout">
     <div class="top">
-      <application-menu v-if="global.isSmallScreen" theme="outline" size="24" fill="#333" @click="toggleSidebar" />
+      <application-menu
+        v-if="global.isSmallScreen"
+        theme="outline"
+        size="24"
+        fill="#333"
+        @click="toggleSidebar"
+      />
       <div class="logo" @click="() => doRouteJump('/admin/home')">
         <img src="@/assets/img/logo.png" alt="logo" />
       </div>
       <div class="menu" v-if="global.isLargeScreen">
-        <cus-button v-for="page in adminPages" :key="page.path" shape="round" @click="() => doRouteJump(page.path)"
-                    :tertiary="route.path == page.path">
+        <cus-button
+          v-for="page in adminPages"
+          :key="page.path"
+          shape="round"
+          @click="() => doRouteJump(page.path)"
+          :tertiary="route.path == page.path"
+        >
           <template #icon>
             <component v-if="page.meta.menuIcon" :is="page.meta.menuIcon"></component>
           </template>
@@ -56,10 +65,14 @@ function handleLogout() {
         <cus-button @click="handleLogout">退出</cus-button>
       </div>
     </div>
-    <cus-sidebar :visible="showSidebar" style="width: 200px; padding: 8px;">
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <cus-button v-for="page in adminPages" :key="page.path" @click="() => doRouteJump(page.path)"
-                    :tertiary="route.path == page.path">
+    <cus-sidebar :visible="showSidebar" style="width: 200px; padding: 8px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <cus-button
+          v-for="page in adminPages"
+          :key="page.path"
+          @click="() => doRouteJump(page.path)"
+          :tertiary="route.path == page.path"
+        >
           <component v-if="page.meta.menuIcon" :is="page.meta.menuIcon"></component>
           <span>{{ page.meta.menuTitle || page.name }}</span>
         </cus-button>
@@ -72,7 +85,7 @@ function handleLogout() {
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
+@import '@/assets/variables.module';
 
 .layout {
   height: 100%;
@@ -102,6 +115,7 @@ function handleLogout() {
   gap: 8px;
   //border-bottom: 1px solid $color-grey-200;
   box-shadow: $box-shadow;
+  //background: linear-gradient(to right bottom, $color-makka-300, $color-makka-100);
 }
 
 .menu {
@@ -111,7 +125,7 @@ function handleLogout() {
   gap: 8px;
 
   span {
-    transition: color .25s ease-in-out;
+    transition: color 0.25s ease-in-out;
   }
 
   //&-icon__active {
@@ -136,7 +150,7 @@ function handleLogout() {
   padding-top: 8px;
   box-shadow: $box-shadow;
   box-sizing: border-box;
-  transition: width .5s $ease-in-out-circ;
+  transition: width 0.5s $ease-in-out-circ;
 
   &__show {
     width: 196px;

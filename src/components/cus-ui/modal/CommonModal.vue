@@ -5,9 +5,9 @@
  * @author HJH201314
  *
  * */
-import { Close } from "@icon-park/vue-next";
-import { type CSSProperties, nextTick, ref, toRef, watch } from "vue";
-import type { CommonModalFunc } from "./CommonModal";
+import { Close } from '@icon-park/vue-next';
+import { type CSSProperties, nextTick, ref, toRef, watch } from 'vue';
+import type { CommonModalFunc } from './CommonModal';
 
 interface CommonModalProps {
   showClose?: boolean;
@@ -15,7 +15,7 @@ interface CommonModalProps {
   modalStyle?: CSSProperties;
 }
 
-const props = withDefaults(defineProps<CommonModalProps>(),{
+const props = withDefaults(defineProps<CommonModalProps>(), {
   showClose: true,
   visible: false,
 });
@@ -29,12 +29,16 @@ const emit = defineEmits<{
 const showModal = ref(false);
 
 /* 观测visibility，可以通过切换visibility切换展示状态 */
-watch(() => props.visible, (v) => {
-  // nextTick才真正改变可视，能够让props.visible从一开始就为true时也展示动画
-  nextTick(() => {
-    showModal.value = v;
-  });
-}, { immediate: true });
+watch(
+  () => props.visible,
+  (v) => {
+    // nextTick才真正改变可视，能够让props.visible从一开始就为true时也展示动画
+    nextTick(() => {
+      showModal.value = v;
+    });
+  },
+  { immediate: true }
+);
 /* 展示模态框（暴露的方法，配合ref使用） */
 function open() {
   showModal.value = true;
@@ -44,11 +48,14 @@ function close() {
   showModal.value = false;
 }
 
-watch(() => showModal.value, (newVal, oldVal) => {
-  if (newVal != oldVal) {
-    emit('update:visible', newVal);
+watch(
+  () => showModal.value,
+  (newVal, oldVal) => {
+    if (newVal != oldVal) {
+      emit('update:visible', newVal);
+    }
   }
-});
+);
 
 function handleClose() {
   close();
@@ -66,7 +73,7 @@ defineExpose<CommonModalFunc>({
 <template>
   <Teleport to="body">
     <Transition name="show">
-      <div v-show="showModal" class="modal" :class="{'modal-hide': !showModal}">
+      <div v-show="showModal" class="modal" :class="{ 'modal-hide': !showModal }">
         <div class="modal-mask"></div>
         <div class="modal-body" :style="props.modalStyle">
           <Close v-if="showClose" class="modal-body-close" size="20" @click="handleClose" />
@@ -81,7 +88,7 @@ defineExpose<CommonModalFunc>({
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
+@import '@/assets/variables.module';
 .modal {
   visibility: unset;
   &-hide {
@@ -94,7 +101,7 @@ defineExpose<CommonModalFunc>({
     z-index: 1000;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, 0.5);
   }
 
   &-body {
@@ -107,8 +114,8 @@ defineExpose<CommonModalFunc>({
     max-height: calc(100% - 2rem);
     z-index: 1001;
     background-color: $color-white;
-    border-radius: .5rem;
-    box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, .1);
+    border-radius: 0.5rem;
+    box-shadow: 2px 2px 10px 0 rgba(0, 0, 0, 0.1);
     display: flex; // 由于&-content是由内容撑起来的，这里设置为flex，能够让子元素撑起并占满&-body
     flex-direction: column;
     overflow: hidden;
@@ -119,9 +126,9 @@ defineExpose<CommonModalFunc>({
       position: absolute;
       top: 0;
       right: 0;
-      padding: .25rem;
+      padding: 0.25rem;
       cursor: pointer;
-      border-radius: 0 .5rem 0 .5rem;
+      border-radius: 0 0.5rem 0 0.5rem;
     }
 
     &-content {

@@ -5,3 +5,5 @@ export function recordToMap<K extends string, V>(record: Record<K, V>): Map<K, V
   });
   return map;
 }
+
+export default {};

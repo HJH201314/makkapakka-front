@@ -1,4 +1,4 @@
-import type { DirectiveBinding } from "vue";
+import type { DirectiveBinding } from 'vue';
 
 /**
  * v-shake : 指令绑定值发生变化时，给元素添加抖动效果
@@ -9,9 +9,9 @@ import type { DirectiveBinding } from "vue";
 function shake(el: HTMLElement, binding: DirectiveBinding<boolean>) {
   if (binding.value !== binding.oldValue) {
     // console.log(binding)
-    el.classList.add("shake");
+    el.classList.add('shake');
     setTimeout(() => {
-      el.classList.remove("shake");
+      el.classList.remove('shake');
     }, 500);
   }
 }

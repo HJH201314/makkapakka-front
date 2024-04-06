@@ -9,7 +9,7 @@ const props = defineProps({});
 </template>
 
 <style scoped lang="scss">
-@import "@/assets/variables.module";
+@import '@/assets/variables.module';
 .cus-link {
   text-decoration: none;
   display: inline-block;

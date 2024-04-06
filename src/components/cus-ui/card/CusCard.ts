@@ -3,4 +3,4 @@ export type CusCardProps = {
   shadow?: boolean;
   /* 标题 */
   title?: string;
-}
+};

@@ -14,9 +14,11 @@ import path from 'path';
 export default defineConfig({
   plugins: [
     VueRouter({
-      routesFolder: [{
-        src: 'src/pages',
-      }],
+      routesFolder: [
+        {
+          src: 'src/pages',
+        },
+      ],
       exclude: ['**/components/*', '**/layouts/*'],
     }),
     vue(),
@@ -42,8 +44,8 @@ export default defineConfig({
         VueRouterAutoImports,
         {
           'vue-router/auto': ['useLink'],
-        }
-      ]
+        },
+      ],
     }),
   ],
   css: {
@@ -51,11 +53,11 @@ export default defineConfig({
       localsConvention: 'camelCase', // 修改生成的配置对象的key的展示形式(小驼峰)
       scopeBehaviour: 'local', // 配置当前的模块化行为是模块化还是全局化
       generateScopedName: '[name]_[local]_[hash:5]', // 配置生成的类名的格式
-    }
+    },
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
 });

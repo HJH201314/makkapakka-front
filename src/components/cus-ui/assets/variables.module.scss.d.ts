@@ -7,7 +7,13 @@ declare const classNames: typeof globalClassNames & {
   readonly cusColorWarning: 'cusColorWarning';
   readonly cusColorError: 'cusColorError';
   readonly cusColorWhite: 'cusColorWhite';
+  readonly cusColorGrey: 'cusColorGrey';
+  readonly cusColorGrey50: 'cusColorGrey50';
+  readonly cusColorGrey100: 'cusColorGrey100';
+  readonly cusColorGrey200: 'cusColorGrey200';
+  readonly cusColorGrey300: 'cusColorGrey300';
   readonly cusColorGrey400: 'cusColorGrey400';
+  readonly cusColorGrey500: 'cusColorGrey500';
   readonly cusColorText: 'cusColorText';
   readonly cusColorBackground: 'cusColorBackground';
 };
