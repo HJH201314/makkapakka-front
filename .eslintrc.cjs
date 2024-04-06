@@ -6,7 +6,7 @@ module.exports = {
   extends: [
     './.eslintrc-auto-import.json',
     'plugin:vue/vue3-essential',
-    'airbnb',
+    'eslint:recommended',
     '@vue/eslint-config-typescript',
     '@vue/eslint-config-prettier/skip-formatting',
   ],
@@ -29,5 +29,6 @@ module.exports = {
         ],
       },
     },
+    'import/ignore': ['.vue'],
   },
 };

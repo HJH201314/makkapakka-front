@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+onMounted(() => {
+  console.log('hello AlignCenterLayout.');
+});
+</script>
 
 <template>
   <div class="align-center-layout">

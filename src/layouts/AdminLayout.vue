@@ -2,8 +2,8 @@
 import { ApplicationMenu } from '@icon-park/vue-next';
 import CusButton from '@/components/cus-ui/button/CusButton.vue';
 import CusSidebar from '@/components/cus-ui/sidebar/CusSidebar.vue';
-import useGlobal from '@/commands/useGlobal';
 import { useUserStore } from '@/stores/useUserStore';
+import useGlobal from '@/commands/useGlobal';
 
 const route = useRoute();
 const router = useRouter();

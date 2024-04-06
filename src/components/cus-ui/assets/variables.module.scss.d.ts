@@ -16,5 +16,6 @@ declare const classNames: typeof globalClassNames & {
   readonly cusColorGrey500: 'cusColorGrey500';
   readonly cusColorText: 'cusColorText';
   readonly cusColorBackground: 'cusColorBackground';
+  readonly cusEaseOutCirc: 'cusEaseOutCirc';
 };
 export = classNames;

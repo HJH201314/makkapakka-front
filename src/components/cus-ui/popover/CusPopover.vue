@@ -1,28 +1,54 @@
 <script setup lang="ts">
 /* Popover 悬浮显示组件 */
-import { nextTick, ref } from 'vue';
 import { useMouseInElement } from '@vueuse/core';
+import { nextTick, ref, watch } from 'vue';
+import type { CusPopoverFunc } from './CusPopover';
 
 type PopoverProps = {
   alwaysShow?: boolean; // 调试时使用，让popover一直显示
+  /**
+   * 受控，展示与否，受控模式下将不会在hover时展示
+   */
+  show?: boolean;
+  mode?: 'hover' | 'click';
   position?: 'top' | 'bottom' | 'left' | 'right';
+  size?: 'fit-content' | 'fit-body';
   enabled?: boolean;
 };
 const props = withDefaults(defineProps<PopoverProps>(), {
   alwaysShow: false,
+  mode: 'hover',
   text: '',
   position: 'right',
+  size: 'fit-content',
   enabled: true,
 });
+
+const emit = defineEmits<{
+  (e: 'update:show', v: boolean): void;
+}>();
 
 const refTrigger = ref<HTMLDivElement>();
 const refContainer = ref<HTMLDivElement>();
 const refPopover = ref<HTMLDivElement>();
 
-const showPopover = ref(false);
+const showPopover = ref(props.show ?? false);
 
-function show() {
-  if (!props.enabled) return;
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal != undefined) {
+      if (newVal) doShow();
+      else doHide();
+    }
+  }
+);
+
+function doShow(force?: boolean) {
+  if (!force) {
+    if (!props.enabled) return;
+    if (props.show != undefined && !props.show) return;
+  }
   // 先切换show再设置位置，否则由于popover元素大小不存在，导致位置计算错误
   showPopover.value = true;
   nextTick(() => {
@@ -55,14 +81,16 @@ function show() {
   });
   // 设置定时，如果超出时间，则尝试关闭popover
   clearInterval(closeInterval.value);
-  closeInterval.value = window.setInterval(hide, 500);
+  closeInterval.value = window.setInterval(doHide, 500);
 }
 
 const closeInterval = ref<number>();
 const mouseInBase = useMouseInElement(refContainer);
 const mouseInPopover = useMouseInElement(refPopover);
 
-function hide(e?: MouseEvent) {
+function doHide(e?: MouseEvent, force?: boolean) {
+  if (props.show) return;
+  if (!force && !props.enabled) showPopover.value = false;
   // console.debug({
   //   mouseX: mouseInBase.elementX.value,
   //   mouseY: mouseInBase.elementY.value,
@@ -89,20 +117,28 @@ function hide(e?: MouseEvent) {
     clearInterval(closeInterval.value);
   }
 }
+
+defineExpose<CusPopoverFunc>({
+  forceShow: () => doShow(true),
+  forceHide: () => doHide(undefined, true),
+  show: () => doShow(),
+  hide: () => doHide(),
+});
 </script>
 
 <template>
-  <div class="popover" @mouseenter="show" @mouseleave="hide" ref="refContainer">
-    <span class="popover-wrapper" ref="refTrigger">
+  <div class="popover" @mouseenter="() => doShow(false)" @mouseleave="doHide" ref="refContainer">
+    <div class="popover-wrapper" ref="refTrigger">
       <slot name="body" />
-    </span>
+    </div>
     <Transition>
       <div
         v-show="showPopover || props.alwaysShow"
         class="popover-slot"
+        :class="{ 'fit-body': props.size == 'fit-body' }"
         ref="refPopover"
         role="tooltip"
-        @mouseleave="hide"
+        @mouseleave="doHide"
       >
         <slot name="popover" />
       </div>
@@ -116,12 +152,13 @@ function hide(e?: MouseEvent) {
   position: relative;
   &-slot {
     position: absolute;
-    padding: 0.25rem 0.5rem;
     border-radius: 0.5rem;
     background-color: transparent;
     z-index: 999;
-    opacity: 0.9;
     box-sizing: border-box;
+    &.fit-body {
+      width: 100%;
+    }
   }
 }
 .v-enter-active,

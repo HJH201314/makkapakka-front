@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
 import variables from '@/assets/variables.module.scss';
-import AdminLayout from '@/layouts/AdminLayout.vue';
 import CusConfigProvider from '@/components/cus-ui/config-provider/CusConfigProvider';
+import AdminLayout from '@/layouts/AdminLayout.vue';
+import { RouterView } from 'vue-router';
 
 const route = useRoute();
 </script>
@@ -16,7 +16,7 @@ const route = useRoute();
     }"
   >
     <cus-config-provider :theme="{ primaryColor: variables.colorPrimary }">
-      <router-view v-if="route.path.match(/^(\/|\/admin\/(?!login)).*$/)" v-slot="{ Component }">
+      <router-view v-if="route.path.match(/^\/admin\/(?!login).*$/)" v-slot="{ Component }">
         <admin-layout>
           <transition>
             <component :is="Component"></component>

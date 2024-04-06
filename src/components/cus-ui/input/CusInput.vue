@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import type { CusInputProps } from './CusInput';
+import { computed, ref, watch } from 'vue';
+import type { CusInputFunc, CusInputProps } from './CusInput';
 
 const props = withDefaults(defineProps<CusInputProps>(), {
   value: '',
@@ -13,9 +13,12 @@ const emit = defineEmits<{
   (event: 'update:modelValue', value: string): void;
   // 非受控模式
   (event: 'change', value: string): void;
+  (event: 'focus', e: FocusEvent): void;
+  (event: 'blur', e: FocusEvent): void;
 }>();
 
 const v = ref(props.modelValue || props.value);
+const inputRef = ref<HTMLInputElement>();
 
 watch(
   () => props.modelValue || props.value,
@@ -43,15 +46,33 @@ function handleInput(e: any) {
   emit('update:modelValue', e.target.value as string);
   emit('change', e.target.value as string);
 }
+
+function handleFocus(e: FocusEvent) {
+  emit('focus', e);
+}
+
+function handleBlur(e: FocusEvent) {
+  emit('blur', e);
+}
+
+defineExpose<CusInputFunc>({
+  focus: () => inputRef.value?.focus(),
+  blur: () => inputRef.value?.blur(),
+});
 </script>
 
 <template>
   <input
+    ref="inputRef"
     class="cus-input"
+    :class="{ readonly: props.readonly }"
     :value="v"
     :placeholder="props.placeholder"
     :disabled="props.disabled"
+    :readonly="props.readonly"
     @input="handleInput"
+    @focus="handleFocus"
+    @blur="handleBlur"
     v-bind="props.inputAttrs"
   />
 </template>
@@ -72,6 +93,9 @@ function handleInput(e: any) {
   background-color: $cus-color-grey-100;
   &:focus {
     background-color: $cus-color-grey-300;
+  }
+  &.readonly {
+    cursor: default;
   }
 }
 </style>

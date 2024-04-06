@@ -11,6 +11,7 @@ export type CusInputProps = {
    */
   value?: string;
   placeholder?: string;
+  readonly?: boolean;
   size?: 'sm' | 'md' | 'lg' | InputHTMLAttributes['width'];
   disabled?: boolean;
 
@@ -18,4 +19,9 @@ export type CusInputProps = {
    * input标签的属性
    */
   inputAttrs?: InputHTMLAttributes;
+};
+
+export type CusInputFunc = {
+  focus: () => void;
+  blur: () => void;
 };
