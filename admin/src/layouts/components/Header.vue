@@ -3,7 +3,8 @@
     <t-head-menu :class="menuCls" :theme="theme" expand-type="popup" :value="active">
       <template #logo>
         <span v-if="showLogo" class="header-logo-container" @click="handleNav('/dashboard/base')">
-          <logo-full class="t-logo" />
+          <img class="makka-logo" src="@/assets/logo.png" />
+          <span class="makka-title">MakkaPakka Admin</span>
         </span>
         <div v-else class="header-operate-left">
           <t-button theme="default" shape="square" variant="text" @click="changeCollapsed">
@@ -28,11 +29,11 @@
               <t-icon name="logo-github" />
             </t-button>
           </t-tooltip>
-          <t-tooltip placement="bottom" content="帮助文档">
+          <!-- <t-tooltip placement="bottom" content="帮助文档">
             <t-button theme="default" shape="square" variant="text" @click="navToHelper">
               <t-icon name="help-circle" />
             </t-button>
-          </t-tooltip>
+          </t-tooltip> -->
           <t-dropdown :min-column-width="135" trigger="click">
             <template #dropdown>
               <t-dropdown-menu>
@@ -48,7 +49,7 @@
               <template #icon>
                 <t-icon class="header-user-avatar" name="user-circle" />
               </template>
-              <div class="header-user-account">Tencent</div>
+              <div class="header-user-account">玛卡巴卡</div>
               <template #suffix><t-icon name="chevron-down" /></template>
             </t-button>
           </t-dropdown>
@@ -70,7 +71,6 @@ import { useRouter } from 'vue-router';
 import { useSettingStore } from '@/store';
 import { getActive } from '@/router';
 import { prefix } from '@/config/global';
-import LogoFull from '@/assets/assets-logo-full.svg?component';
 import type { MenuRoute } from '@/types/interface';
 
 import Notice from './Notice.vue';
@@ -151,11 +151,11 @@ const handleLogout = () => {
 };
 
 const navToGitHub = () => {
-  window.open('https://github.com/tencent/tdesign-vue-next-starter');
+  window.open('https://github.com/HJH201314/makkapakka-front');
 };
 
 const navToHelper = () => {
-  window.open('http://tdesign.tencent.com/starter/docs/get-started');
+  window.open('https://github.com/HJH201314/makkapakka-front');
 };
 </script>
 <style lang="less" scoped>
@@ -233,6 +233,7 @@ const navToHelper = () => {
   width: 184px;
   height: 26px;
   display: flex;
+  align-items: center;
   margin-left: 24px;
   color: var(--td-text-color-primary);
 
@@ -242,6 +243,22 @@ const navToHelper = () => {
     &:hover {
       cursor: pointer;
     }
+  }
+
+  .makka-logo {
+    height: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .makka-title {
+    text-wrap: nowrap;
+    font-size: medium;
+    font-weight: bold;
+    font-style: italic;
   }
 
   &:hover {

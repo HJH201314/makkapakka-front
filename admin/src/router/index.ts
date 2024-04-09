@@ -59,6 +59,8 @@ export const getRoutesExpanded = () => {
 
 export const getActive = (maxLevel = 3): string => {
   const route = useRoute();
+  if (!route) return '';
+  console.log(route)
   if (!route.path) {
     return '';
   }

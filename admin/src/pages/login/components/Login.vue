@@ -9,7 +9,7 @@
   >
     <template v-if="type == 'password'">
       <t-form-item name="account">
-        <t-input v-model="formData.account" size="large" placeholder="请输入账号：admin">
+        <t-input v-model="formData.account" size="large" placeholder="请输入邮箱">
           <template #prefix-icon>
             <t-icon name="user" />
           </template>
@@ -22,7 +22,7 @@
           size="large"
           :type="showPsw ? 'text' : 'password'"
           clearable
-          placeholder="请输入登录密码：admin"
+          placeholder="请输入密码"
         >
           <template #prefix-icon>
             <t-icon name="lock-on" />
@@ -48,12 +48,12 @@
       <qrcode-vue value="" :size="192" level="H" />
     </template>
 
-    <!-- 手机号登陆 -->
+    <!-- 邮箱验证码登陆 -->
     <template v-else>
-      <t-form-item name="phone">
-        <t-input v-model="formData.phone" size="large" placeholder="请输入手机号码">
+      <t-form-item name="email">
+        <t-input v-model="formData.email" size="large" placeholder="请输入邮箱">
           <template #prefix-icon>
-            <t-icon name="mobile" />
+            <t-icon name="mail" />
           </template>
         </t-input>
       </t-form-item>
@@ -72,8 +72,8 @@
 
     <div class="switch-container">
       <span v-if="type !== 'password'" class="tip" @click="switchType('password')">使用账号密码登录</span>
-      <span v-if="type !== 'qrcode'" class="tip" @click="switchType('qrcode')">使用微信扫码登录</span>
-      <span v-if="type !== 'phone'" class="tip" @click="switchType('phone')">使用手机号登录</span>
+      <!-- <span v-if="type !== 'qrcode'" class="tip" @click="switchType('qrcode')">使用微信扫码登录</span> -->
+      <span v-if="type !== 'email'" class="tip" @click="switchType('email')">使用验证码登录</span>
     </div>
   </t-form>
 </template>
@@ -90,7 +90,7 @@ import { useUserStore } from '@/store';
 const userStore = useUserStore();
 
 const INITIAL_DATA = {
-  phone: '',
+  email: '',
   account: 'admin',
   password: 'admin',
   verifyCode: '',
@@ -98,7 +98,7 @@ const INITIAL_DATA = {
 };
 
 const FORM_RULES: Record<string, FormRule[]> = {
-  phone: [{ required: true, message: '手机号必填', type: 'error' }],
+  email: [{ required: true, message: '邮箱必填', type: 'error' }],
   account: [{ required: true, message: '账号必填', type: 'error' }],
   password: [{ required: true, message: '密码必填', type: 'error' }],
   verifyCode: [{ required: true, message: '验证码必填', type: 'error' }],
