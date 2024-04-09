@@ -1,6 +1,6 @@
-# MakkaPakka Live - 前端
+# MakkaPakka Live - 用户端
 
-基于 Vue3 打造的直播平台（及其管理端）
+基于 Vue3 打造的直播平台用户端
 
 ## 技术栈 & 库
 
@@ -16,10 +16,10 @@
 ## 快速开始
 
 ```sh
-pnpm install # 安装依赖
-pnpm dev # 启动开发服务器
-pnpm build # 构建产物
-pnpm lint # 使用ESLint检查并修复代码
+pnpm install    # 安装依赖
+pnpm dev        # 启动开发服务器
+pnpm build      # 构建产物
+pnpm lint       # 使用ESLint检查并修复代码
 ```
 
 ## 开发文档
