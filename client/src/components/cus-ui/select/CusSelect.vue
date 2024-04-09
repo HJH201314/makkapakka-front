@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Check, Down } from '@icon-park/vue-next';
-import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
-import { useMouseInElement, useMousePressed } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
+import { onClickOutside } from '@vueuse/core';
 import { useConfigProvider } from '../config-provider/CusConfigProvider';
 import CusInput from '../input/CusInput.vue';
 import CusPopover from '../popover/CusPopover.vue';
@@ -31,9 +31,10 @@ const emit = defineEmits<{
 
 const cusInputRef = ref<CusInputFunc>();
 const cusSelectRef = ref<HTMLDivElement>();
+// 当且仅当点击select外部的时候关闭popover
 onClickOutside(cusSelectRef, () => {
-  showPopover.value = false;
-  cusInputRef.value?.blur();
+  showPopover.value = false; // 先命令popover关闭
+  cusInputRef.value?.blur(); // 然后让input失去焦点
 });
 
 const options = ref<CusSelectOption[]>([]);
@@ -92,6 +93,7 @@ function handleInputFocus() {
 }
 
 function handleInputBlur() {
+  // 若popover未被命令关闭, 要重新激活input的焦点
   if (showPopover.value) {
     cusInputRef.value?.focus();
   }

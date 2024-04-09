@@ -6,12 +6,17 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import VueDevTools from 'vite-plugin-vue-devtools';
 import VueRouter from 'unplugin-vue-router/vite';
 import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { TDesignResolver } from 'unplugin-vue-components/resolvers';
 import { VueRouterAutoImports } from 'unplugin-vue-router';
 import sassDts from 'vite-plugin-sass-dts';
 import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    port: 5173,
+  },
   plugins: [
     VueRouter({
       routesFolder: [
@@ -45,6 +50,18 @@ export default defineConfig({
         {
           'vue-router/auto': ['useLink'],
         },
+      ],
+      resolvers: [
+        TDesignResolver({
+          library: 'vue-next',
+        }),
+      ],
+    }),
+    Components({
+      resolvers: [
+        TDesignResolver({
+          library: 'vue-next',
+        }),
       ],
     }),
   ],

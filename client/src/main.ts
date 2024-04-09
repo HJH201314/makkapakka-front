@@ -2,10 +2,12 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 
 import Antd from 'ant-design-vue';
+import TDesign from 'tdesign-vue-next';
 import { install } from '@icon-park/vue-next/es/all';
 import App from './App.vue';
 import router from './router';
 import 'ant-design-vue/dist/reset.css';
+import 'tdesign-vue-next/es/style/index.css';
 import '@icon-park/vue-next/styles/index.css';
 import '@/assets/main.scss';
 
@@ -15,6 +17,7 @@ app.use(createPinia());
 app.use(router);
 
 app.use(Antd);
+app.use(TDesign);
 
 install(app, 'ip'); // IconPark
 
