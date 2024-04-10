@@ -3,7 +3,7 @@
     <t-card class="list-card-container">
       <t-row justify="space-between">
         <div class="left-operation-container">
-          <t-button @click="handleSetupContract"> 添加角色 </t-button>
+          <t-button @click="handleClickAddRole"> 添加角色 </t-button>
           <!-- <t-button variant="base" theme="default" :disabled="!selectedRowKeys.length"> 导出合同 </t-button> -->
           <!-- <p v-if="!!selectedRowKeys.length" class="selected-count">已选{{ selectedRowKeys.length }}项</p> -->
         </div>
@@ -35,8 +35,8 @@
         </template>
 
         <template #op="slotProps">
-          <a class="t-button-link" @click="handleClickEdit()">修改</a>
-          <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
+          <a class="t-button-link" @click="handleClickEditRole()">修改</a>
+          <a class="t-button-link" @click="handleClickDeleteRole()">删除</a>
         </template>
       </t-table>
     </t-card>
@@ -48,6 +48,39 @@
       :on-cancel="onCancel"
       @confirm="onConfirmDelete"
     />
+
+    <t-dialog
+      v-model:visible="modifyVisible"
+      :closeOnEscKeydown="false"
+      :closeOnOverlayClick="false"
+      :header="`${modifyOp}角色`"
+      :confirm-btn="{
+        content: modifyLoading ? '保存中' : '保存',
+        theme: 'primary',
+        loading: modifyLoading,
+      }"
+      :on-confirm="handleModifyConfirm"
+      style="width: 75%;"
+  >
+    <t-form ref="modifyForm" :data="modifyFormData" :rules="FORM_RULES">
+      <t-form-item label="角色名称" name="name">
+        <t-input v-model="modifyFormData.name" placeholder="请输入角色名称"></t-input>
+      </t-form-item>
+      <t-form-item v-if="modifyOp == '修改'" label="是否启用" name="enabled">
+        <t-switch v-model="modifyFormData.enabled"></t-switch>
+      </t-form-item>
+      <t-form-item label="角色权限" name="features">
+        <t-tree-select
+          :data="featureOptions"
+          v-model="modifyFormData.features"
+          clearable
+          filterable
+          multiple
+          placeholder="请选择权限"
+        />
+      </t-form-item>
+    </t-form>
+  </t-dialog>
   </div>
 </template>
 
@@ -58,8 +91,9 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { MessagePlugin, PrimaryTableCol, TableRowData, PageInfo } from 'tdesign-vue-next';
+import { ref, reactive, computed, onMounted } from 'vue';
+import { MessagePlugin, PrimaryTableCol, TableRowData } from 'tdesign-vue-next';
+import { FormProps, FormInstanceFunctions, ValidateResultType, CheckboxGroupProps, InputProps } from 'tdesign-vue-next';
 import { useRouter } from 'vue-router';
 import { SearchIcon } from 'tdesign-icons-vue-next';
 
@@ -67,6 +101,10 @@ import { ROLE_STATUS } from '@/constants';
 import { getList } from '@/api/role';
 import { useSettingStore } from '@/store';
 import { prefix } from '@/config/global';
+import useFeatureStore from '@/hooks/biz/useFeatureStore';
+import { sleep } from '@/utils/delay';
+
+const { featureOptions } = useFeatureStore();
 
 const COLUMNS: PrimaryTableCol<TableRowData>[] = [
   {
@@ -132,6 +170,43 @@ onMounted(() => {
 });
 
 const confirmVisible = ref(false);
+const modifyVisible = ref(false);
+const modifyOp = ref<'添加'|'修改'>('添加');
+const modifyLoading = ref(false);
+
+const FORM_RULES: FormProps['rules'] = {
+  name: [{ required: true, message: '角色名称为必填项' }],
+  features: [{ validator: (v) => v.length > 0, message: '至少选择一项权限' }],
+};
+const modifyFormData: FormProps['data'] = reactive<{
+  name: string;
+  features: number[];
+  enabled: boolean;
+}>({
+  name: '',
+  features: [],
+  enabled: true,
+});
+const modifyForm = ref<FormInstanceFunctions>(null);
+
+const handleModifyConfirm = async () => {
+  try {
+    const validateResult = await modifyForm.value.validate();
+    console.log(validateResult);
+    
+    if (Object.values(validateResult).every(v => v.result)) {
+      modifyLoading.value = true;
+      // TODO: 提交
+      await sleep(1000);
+    }
+  } catch (e) {
+
+  } finally {
+    modifyLoading.value = false;
+    modifyVisible.value = false;
+    MessagePlugin.success(`${modifyOp.value}成功`);
+  }
+}
 
 const selectedRowKeys = ref([1, 2]);
 
@@ -169,6 +244,20 @@ const rehandlePageChange = (curr, pageInfo) => {
 const rehandleChange = (changeParams, triggerAndData) => {
   console.log('统一Change', changeParams, triggerAndData);
 };
+const handleClickAddRole = () => {
+  modifyOp.value = '添加';
+  modifyVisible.value = true;
+}
+const handleClickSaveRole = () => {
+
+}
+const handleClickEditRole = () => {
+  modifyOp.value = '修改';
+  modifyVisible.value = true;
+}
+const handleClickDeleteRole = () => {
+  confirmVisible.value = true;
+}
 const handleClickDetail = () => {
   // router.push('/detail/base');
 };

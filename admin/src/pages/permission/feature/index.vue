@@ -7,7 +7,7 @@
             <search-icon size="20px" />
           </template>
         </t-input>
-        <t-tree :data="DEFAULT_TREE_DATA" hover expand-on-click-node :default-expanded="expanded" :filter="filterByText" />
+        <t-tree :data="featureCategories" hover expand-on-click-node :default-expanded="expanded" :filter="filterByText" />
       </div>
       <div class="list-tree-content">
         <feature-table />
@@ -28,6 +28,9 @@ import { SearchIcon } from 'tdesign-icons-vue-next';
 
 import { DEFAULT_TREE_DATA } from './constants';
 import FeatureTable from './components/FeatureTable.vue';
+import useFeatureStore from '@/hooks/biz/useFeatureStore';
+
+const { featureCategories } = useFeatureStore();
 
 const filterByText = ref();
 const filterText = ref();

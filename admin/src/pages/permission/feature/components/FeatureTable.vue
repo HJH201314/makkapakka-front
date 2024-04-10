@@ -55,7 +55,7 @@
 
     <div class="table-container">
       <t-table
-        :data="data"
+        :data="featureList"
         :columns="COLUMNS"
         :row-key="rowKey"
         :vertical-align="verticalAlign"
@@ -89,7 +89,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { MessagePlugin, PrimaryTableCol, TableRowData, PageInfo } from 'tdesign-vue-next';
-import Trend from '@/components/trend/index.vue';
 import { getList } from '@/api/feature';
 import { useSettingStore } from '@/store';
 import { prefix } from '@/config/global';
@@ -98,8 +97,29 @@ import {
   FEATURE_STATUS,
   FEATURE_STATUS_OPTIONS,
 } from '@/constants';
+import useFeatureStore from '@/hooks/biz/useFeatureStore';
 
 const store = useSettingStore();
+const { features } = useFeatureStore();
+
+const getFeatureList = (features) => {
+  const list = [];
+
+  features.forEach((feature, i) => {
+    if (feature.children && feature.children.length > 0) {
+      const childList = getFeatureList(feature.children);
+      list.push(...childList);
+    } else {
+      list.push({ ...feature, type: features[i].name, status: feature.status ? 0 : 1 });
+    }
+  });
+  console.log(list)
+  return list;
+};
+
+const featureList = computed(() => {
+  return getFeatureList(features);
+});
 
 const COLUMNS: PrimaryTableCol<TableRowData>[] = [
   {
