@@ -18,7 +18,7 @@
                   v-model="formData.name"
                   class="form-item-content"
                   type="search"
-                  placeholder="请输入合同名称"
+                  placeholder="请输入功能名称"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -29,7 +29,7 @@
                   v-model="formData.status"
                   class="form-item-content"
                   :options="FEATURE_STATUS_OPTIONS"
-                  placeholder="请选择合同状态"
+                  placeholder="请选择功能状态"
                 />
               </t-form-item>
             </t-col>
@@ -38,7 +38,7 @@
                 <t-input
                   v-model="formData.no"
                   class="form-item-content"
-                  placeholder="请输入合同编号"
+                  placeholder="请输入功能编号"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -68,12 +68,12 @@
       >
         <template #status="{ row }">
           <t-tag v-if="row.status === FEATURE_STATUS.ENABLED" theme="success" variant="light"> 启用 </t-tag>
-          <t-tag v-if="row.status === FEATURE_STATUS.DISABLED" theme="warning" variant="light"> 禁用 </t-tag>
-          <t-tag v-if="row.status === FEATURE_STATUS.ABANDONED" theme="warning" variant="light"> 弃用 </t-tag>
+          <t-tag v-if="row.status === FEATURE_STATUS.DISABLED" theme="danger" variant="light"> 停用 </t-tag>
         </template>
-        <template #op="slotProps">
-          <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a>
-          <a class="t-button-link" @click="handleClickDelete(slotProps)">删除</a>
+        <template #op="{ row }">
+          <!-- <a class="t-button-link" @click="rehandleClickOp(slotProps)">管理</a> -->
+          <a v-if="row.status == FEATURE_STATUS.ENABLED" class="t-button-link" @click="handleClickDisable(row)">停用</a>
+          <a v-if="row.status == FEATURE_STATUS.DISABLED" class="t-button-link" @click="handleClickEnable(row)">启用</a>
         </template>
       </t-table>
       <t-dialog
@@ -90,7 +90,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { MessagePlugin, PrimaryTableCol, TableRowData, PageInfo } from 'tdesign-vue-next';
 import Trend from '@/components/trend/index.vue';
-import { getList } from '@/api/list';
+import { getList } from '@/api/feature';
 import { useSettingStore } from '@/store';
 import { prefix } from '@/config/global';
 
@@ -103,42 +103,26 @@ const store = useSettingStore();
 
 const COLUMNS: PrimaryTableCol<TableRowData>[] = [
   {
-    title: '合同名称',
+    title: '功能名称',
     fixed: 'left',
-    width: 200,
     ellipsis: true,
     align: 'left',
     colKey: 'name',
   },
-  { title: '合同状态', colKey: 'status', width: 200 },
+  { title: '功能状态', colKey: 'status', width: 200 },
   {
-    title: '合同编号',
-    width: 200,
+    title: '功能编号',
     ellipsis: true,
     colKey: 'no',
   },
   {
-    title: '合同类型',
-    width: 200,
+    title: '功能类型',
     ellipsis: true,
-    colKey: 'contractType',
-  },
-  {
-    title: '合同收付类型',
-    width: 200,
-    ellipsis: true,
-    colKey: 'paymentType',
-  },
-  {
-    title: '合同金额 (元)',
-    width: 200,
-    ellipsis: true,
-    colKey: 'amount',
+    colKey: 'type',
   },
   {
     align: 'left',
     fixed: 'right',
-    width: 200,
     colKey: 'op',
     title: '操作',
   },
@@ -231,6 +215,14 @@ const rehandleChange = (changeParams, triggerAndData) => {
 const rehandleClickOp = ({ text, row }) => {
   console.log(text, row);
 };
+
+function handleClickEnable(row) {
+
+}
+
+function handleClickDisable(row) {
+  
+}
 
 const headerAffixedTop = computed(
   () =>

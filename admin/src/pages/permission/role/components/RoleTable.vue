@@ -18,7 +18,7 @@
                   v-model="formData.name"
                   class="form-item-content"
                   type="search"
-                  placeholder="请输入合同名称"
+                  placeholder="请输入功能名称"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -29,7 +29,7 @@
                   v-model="formData.status"
                   class="form-item-content"
                   :options="FEATURE_STATUS_OPTIONS"
-                  placeholder="请选择合同状态"
+                  placeholder="请选择功能状态"
                 />
               </t-form-item>
             </t-col>
@@ -38,7 +38,7 @@
                 <t-input
                   v-model="formData.no"
                   class="form-item-content"
-                  placeholder="请输入合同编号"
+                  placeholder="请输入功能编号"
                   :style="{ minWidth: '134px' }"
                 />
               </t-form-item>
@@ -103,42 +103,26 @@ const store = useSettingStore();
 
 const COLUMNS: PrimaryTableCol<TableRowData>[] = [
   {
-    title: '合同名称',
+    title: '功能名称',
     fixed: 'left',
-    width: 200,
     ellipsis: true,
     align: 'left',
     colKey: 'name',
   },
-  { title: '合同状态', colKey: 'status', width: 200 },
+  { title: '功能状态', colKey: 'status', width: 200 },
   {
-    title: '合同编号',
-    width: 200,
+    title: '功能编号',
     ellipsis: true,
     colKey: 'no',
   },
   {
-    title: '合同类型',
-    width: 200,
+    title: '功能类型',
     ellipsis: true,
     colKey: 'contractType',
   },
   {
-    title: '合同收付类型',
-    width: 200,
-    ellipsis: true,
-    colKey: 'paymentType',
-  },
-  {
-    title: '合同金额 (元)',
-    width: 200,
-    ellipsis: true,
-    colKey: 'amount',
-  },
-  {
     align: 'left',
     fixed: 'right',
-    width: 200,
     colKey: 'op',
     title: '操作',
   },

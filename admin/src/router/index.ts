@@ -27,7 +27,7 @@ const defaultRouterList: Array<RouteRecordRaw> = [
   },
   {
     path: '/',
-    redirect: '/dashboard/base',
+    redirect: '/dashboard/live',
   },
   {
     path: '/:w+',
@@ -56,9 +56,9 @@ export const getRoutesExpanded = () => {
   });
   return uniq(expandedRoutes);
 };
-
-export const getActive = (maxLevel = 3): string => {
-  const route = useRoute();
+1
+export const getActive = (maxLevel = 3, route = useRoute()): string => {
+  // 如果不手动传入 route，直接使用 useRoute 会导致 undefined
   if (!route) return '';
   console.log(route)
   if (!route.path) {
