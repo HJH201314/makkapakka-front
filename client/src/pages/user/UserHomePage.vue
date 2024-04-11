@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserInfo from '@/pages/user/UserInfo.vue';
+import UserInfo from '@/pages/user/components/UserInfo.vue';
 
 definePage({
   path: '/user/home',
