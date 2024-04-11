@@ -1,5 +1,6 @@
 <template>
   <t-form
+    style="background-color: transparent;"
     ref="form"
     :class="['item-container', `login-${type}`]"
     :data="formData"
@@ -147,6 +148,5 @@ const onSubmit = async ({ validateResult }) => {
 };
 </script>
 
-<style lang="less" scoped>
-@import url('../index.less');
+<style lang="less" scoped src="../index.less">
 </style>

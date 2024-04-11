@@ -1,6 +1,9 @@
 <template>
   <header class="login-header">
-    <logo-full-icon class="logo" />
+    <span class="logo-container">
+          <img class="makka-logo" src="@/assets/logo.png" />
+          <span class="makka-title">&nbsp;MakkaPakka Admin</span>
+        </span>
     <div class="operations-container">
       <t-button theme="default" shape="square" variant="text" @click="navToGitHub">
         <t-icon name="logo-github" class="icon" />
@@ -16,7 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import LogoFullIcon from '@/assets/assets-logo-full.svg?component';
 import { useSettingStore } from '@/store';
 
 const settingStore = useSettingStore();
@@ -44,8 +46,30 @@ const navToHelper = () => {
   backdrop-filter: blur(5px);
   color: var(--td-text-color-primary);
 
-  .logo {
-    width: 188px;
+  .logo-container {
+    height: 48px;
+    display: flex;
+    align-items: center;
+
+    .makka-logo {
+      height: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    .makka-title {
+      text-wrap: nowrap;
+      font-size: medium;
+      font-weight: bold;
+      font-style: italic;
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .operations-container {

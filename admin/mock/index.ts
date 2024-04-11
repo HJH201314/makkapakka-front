@@ -33,7 +33,7 @@ export default [
     }),
   },
   {
-    url: '/api/get-list',
+    url: '/api/role/list',
     method: 'get',
     response: () => ({
       code: 0,
@@ -42,14 +42,29 @@ export default [
           'list|1-100': [
             {
               'index|+1': 1,
-              'status|1': '@natural(0, 4)',
-              no: 'BH00@natural(01, 100)',
-              name: '@city()办公用品采购项目',
-              'paymentType|1': '@natural(0, 1)',
-              'contractType|1': '@natural(0, 2)',
-              updateTime: '2020-05-30 @date("HH:mm:ss")',
-              amount: '@natural(10, 500),000,000',
-              adminName: '@cname()',
+              'status|1': '@natural(0, 1)',
+              no: 'ROLE@natural(01, 100)',
+              name: '角色@natural(01, 100)',
+            },
+          ],
+        }),
+      },
+    }),
+  },
+  {
+    url: '/api/feature/list',
+    method: 'get',
+    response: () => ({
+      code: 0,
+      data: {
+        ...Mock.mock({
+          'list|1-100': [
+            {
+              'index|+1': 1,
+              'status|1': '@natural(0, 1)',
+              no: 'FEATURE@natural(01, 100)',
+              name: '功能@natural(01, 100)',
+              type: Mock.Random.pick(['用户管理', '权限管理', '直播管理']),
             },
           ],
         }),

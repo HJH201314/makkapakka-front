@@ -4,7 +4,7 @@
       <template #logo>
         <span v-if="showLogo" class="header-logo-container" @click="handleNav('/dashboard/base')">
           <img class="makka-logo" src="@/assets/logo.png" />
-          <span class="makka-title">MakkaPakka Admin</span>
+          <span class="makka-title">&nbsp;MakkaPakka Admin</span>
         </span>
         <div v-else class="header-operate-left">
           <t-button theme="default" shape="square" variant="text" @click="changeCollapsed">
@@ -19,10 +19,10 @@
       <template #operations>
         <div class="operations-container">
           <!-- 搜索框 -->
-          <search v-if="layout !== 'side'" :layout="layout" />
+          <!-- <search v-if="layout !== 'side'" :layout="layout" /> -->
 
           <!-- 全局通知 -->
-          <notice />
+          <!-- <notice /> -->
 
           <t-tooltip placement="bottom" content="代码仓库">
             <t-button theme="default" shape="square" variant="text" @click="navToGitHub">
