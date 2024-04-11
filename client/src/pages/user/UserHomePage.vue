@@ -5,6 +5,8 @@ definePage({
   path: '/user/home',
   name: '用户 - 直播页',
 });
+
+let fans = ref(111);
 </script>
 
 <template>
@@ -13,7 +15,7 @@ definePage({
     <img src="@/assets/img/cat.jpeg" class="test" alt="" />
     <UserInfo
       avatar="aaa"
-      :fans="111"
+      v-model:fans="fans"
       :follow="123"
       :likes="321"
       name="啊啊啊"
