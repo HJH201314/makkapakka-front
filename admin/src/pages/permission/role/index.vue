@@ -35,7 +35,7 @@
         </template>
 
         <template #op="slotProps">
-          <a class="t-button-link" @click="handleClickEditRole()">修改</a>
+          <a class="t-button-link" @click="handleClickEditRole(slotProps.row)">修改</a>
           <a class="t-button-link" @click="handleClickDeleteRole()">删除</a>
         </template>
       </t-table>
@@ -98,8 +98,8 @@ import { useRouter } from 'vue-router';
 import { SearchIcon } from 'tdesign-icons-vue-next';
 
 import { ROLE_STATUS } from '@/constants';
-import { getList } from '@/api/role';
 import { useSettingStore } from '@/store';
+import useRoleStore from '@/hooks/biz/useRoleStore';
 import { prefix } from '@/config/global';
 import useFeatureStore from '@/hooks/biz/useFeatureStore';
 import { sleep } from '@/utils/delay';
@@ -129,6 +129,7 @@ const COLUMNS: PrimaryTableCol<TableRowData>[] = [
 ];
 
 const store = useSettingStore();
+const roleStore = useRoleStore();
 
 const data = ref([]);
 const pagination = ref({
@@ -143,7 +144,7 @@ const dataLoading = ref(false);
 const fetchData = async () => {
   dataLoading.value = true;
   try {
-    const { list } = await getList();
+    const list = roleStore.roles;
     data.value = list;
     pagination.value = {
       ...pagination.value,
@@ -176,13 +177,15 @@ const modifyLoading = ref(false);
 
 const FORM_RULES: FormProps['rules'] = {
   name: [{ required: true, message: '角色名称为必填项' }],
-  features: [{ validator: (v) => v.length > 0, message: '至少选择一项权限' }],
+  features: [{ validator: (v) => v.length >= 0, message: '至少选择0项权限' }],
 };
 const modifyFormData: FormProps['data'] = reactive<{
+  no: string;
   name: string;
   features: number[];
   enabled: boolean;
 }>({
+  no: '',
   name: '',
   features: [],
   enabled: true,
@@ -198,6 +201,11 @@ const handleModifyConfirm = async () => {
       modifyLoading.value = true;
       // TODO: 提交
       await sleep(1000);
+      if (modifyOp.value === '添加') {
+        roleStore.addRole({ ...modifyFormData.value, status: modifyFormData.enabled ? 0 : 1 });
+      } else {
+        roleStore.updateRole({ ...modifyFormData.value, status: modifyFormData.enabled ? 0 : 1 });
+      }
     }
   } catch (e) {
 
@@ -205,6 +213,7 @@ const handleModifyConfirm = async () => {
     modifyLoading.value = false;
     modifyVisible.value = false;
     MessagePlugin.success(`${modifyOp.value}成功`);
+    fetchData();
   }
 }
 
@@ -251,9 +260,13 @@ const handleClickAddRole = () => {
 const handleClickSaveRole = () => {
 
 }
-const handleClickEditRole = () => {
+const handleClickEditRole = (record) => {
   modifyOp.value = '修改';
   modifyVisible.value = true;
+  modifyFormData.no = record.no || '';
+  modifyFormData.name = record.name || '';
+  modifyFormData.features = record.features || [];
+  modifyFormData.enabled = record.status === 0;
 }
 const handleClickDeleteRole = () => {
   confirmVisible.value = true;
