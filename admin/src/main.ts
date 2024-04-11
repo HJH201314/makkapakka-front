@@ -8,6 +8,7 @@ import router from './router';
 import '@/style/index.less';
 import './permission';
 import App from './App.vue';
+import '@icon-park/vue-next/styles/index.css';
 
 const app = createApp(App);
 

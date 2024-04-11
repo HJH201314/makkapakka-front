@@ -10,6 +10,9 @@ importers:
 
   admin:
     dependencies:
+      '@icon-park/vue-next':
+        specifier: ^1.4.2
+        version: 1.4.2(vue@3.4.21)
       axios:
         specifier: ^1.6.8
         version: 1.6.8
@@ -1416,7 +1419,7 @@ packages:
     peerDependencies:
       vue: 3.x
     dependencies:
-      vue: 3.4.21(typescript@5.4.2)
+      vue: 3.4.21(typescript@5.4.4)
     dev: false
 
   /@isaacs/cliui@8.0.2:

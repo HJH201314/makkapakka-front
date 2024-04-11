@@ -8,7 +8,7 @@
       </template>
       <menu-content :nav-data="menu" />
       <template #operations>
-        <span class="version-container"> {{ !collapsed ? 'TDesign Starter' : '' }} {{ pgk.version }} </span>
+        <!-- <span class="version-container"> {{ !collapsed ? 'TDesign Starter' : '' }} {{ pgk.version }} </span> -->
       </template>
     </t-menu>
     <div :class="`${prefix}-side-nav-placeholder${collapsed ? '-hidden' : ''}`"></div>
@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import type { PropType } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import union from 'lodash/union';
 
 import { useSettingStore } from '@/store';
@@ -32,6 +32,8 @@ import AssetLogoFull from '@/assets/assets-logo-full.svg?component';
 import MenuContent from './MenuContent.vue';
 
 const MIN_POINT = 992 - 1;
+
+const route = useRoute();
 
 const props = defineProps({
   menu: {
@@ -66,7 +68,7 @@ const props = defineProps({
 
 const collapsed = computed(() => useSettingStore().isSidebarCompact);
 
-const active = computed(() => getActive());
+const active = computed(() => getActive(3, route));
 
 const defaultExpanded = computed(() => {
   const path = getActive();
