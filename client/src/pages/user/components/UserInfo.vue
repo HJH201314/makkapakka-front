@@ -5,7 +5,7 @@
       <!--      <div class = "avatar">-->
       <!--        <img src = "@/assets/img/cat.jpeg" alt = "avatar">-->
       <!--      </div>-->
-      <a-avatar class="avatar" :size="88" icon="user" :src="avatarImg" />
+      <a-avatar class="avatar" :size="88" icon="user" :src="avatar" />
       <!--      <div class="invisible"></div>-->
       <div class="right">
         <div class="data">
@@ -40,7 +40,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import avatarImg from '@/assets/img/cat.jpeg';
 import colors from '@/assets/variables.module.scss';
 
 const props = defineProps<{
@@ -53,14 +52,14 @@ const props = defineProps<{
   followed: boolean;
 }>();
 
-let followColor = ref(props.followed ? colors.colorSuccess : colors.colorPrimary);
+let followColor = ref(props.followed ? colors.colorSuccess : '#fb7299');
 let followed = ref(props.followed);
 let fans = ref(props.fans);
 const emit = defineEmits(['update:fans']);
 // 点击关注
 let onFollow = (): void => {
   followed.value = !followed.value;
-  followColor.value = followed.value ? colors.colorSuccess : colors.colorPrimary;
+  followColor.value = followed.value ? colors.colorSuccess : '#fb7299';
   if (followed.value) {
     fans.value++;
     console.log('关注成功' + fans.value);
@@ -83,6 +82,7 @@ let onFollow = (): void => {
   z-index: 0;
   background-color: #fff;
   border-bottom: rgba(0, 0, 0, 0.2) 1px solid;
+  margin-top: -2rem;
 
   .top {
     z-index: 1;
@@ -92,6 +92,8 @@ let onFollow = (): void => {
     align-items: center;
     box-shadow: white 0 0 0.5rem 0;
     position: relative;
+    padding: 0;
+    //margin-top: -0.5rem;
 
     .avatar {
       width: 5.5rem;
@@ -173,7 +175,8 @@ let onFollow = (): void => {
       .button {
         width: 90%;
         position: relative;
-        color: black;
+        color: white;
+        letter-spacing: 0.4rem;
       }
     }
   }
@@ -187,8 +190,8 @@ let onFollow = (): void => {
     .name {
       font-size: 1.3rem;
       font-weight: normal;
-      color: $color-makka-500;
-      margin-bottom: 1rem;
+      color: #fb7299;
+      margin-bottom: 0.6rem;
     }
 
     .desc {
