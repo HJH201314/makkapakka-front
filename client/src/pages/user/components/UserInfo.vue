@@ -52,14 +52,14 @@ const props = defineProps<{
   followed: boolean;
 }>();
 
-let followColor = ref(props.followed ? colors.colorSuccess : '#fb7299');
+let followColor = ref(props.followed ? colors.colorSecondary : colors.colorPrimary);
 let followed = ref(props.followed);
 let fans = ref(props.fans);
 const emit = defineEmits(['update:fans']);
 // 点击关注
 let onFollow = (): void => {
   followed.value = !followed.value;
-  followColor.value = followed.value ? colors.colorSuccess : '#fb7299';
+  followColor.value = followed.value ? colors.colorSecondary : colors.colorPrimary;
   if (followed.value) {
     fans.value++;
     console.log('关注成功' + fans.value);
