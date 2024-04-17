@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "MOCK=true vite --host",
+    "dev:no-mock": "MOCK=false vite --host",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
@@ -18,7 +19,6 @@
     "@vueuse/core": "^10.9.0",
     "ant-design-vue": "4",
     "pinia": "^2.1.7",
-    "tdesign-vue-next": "^1.9.3",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
@@ -48,6 +48,7 @@
     "unplugin-vue-components": "^0.26.0",
     "unplugin-vue-router": "^0.8.5",
     "vite": "^5.1.6",
+    "vite-plugin-mock": "^3.0.1",
     "vite-plugin-sass-dts": "^1.3.17",
     "vite-plugin-vue-devtools": "^7.0.18",
     "vitest": "^1.4.0",
