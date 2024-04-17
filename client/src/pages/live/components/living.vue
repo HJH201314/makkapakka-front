@@ -37,7 +37,7 @@ function handleClick() {
 
 <style scoped lang="scss">
 .card {
-  width: 94%;
+  width: 100%;
   height: auto;
   border: 1px solid #ccc;
   border-radius: 5px;

@@ -2,11 +2,10 @@
   <!--    用户信息，包含：头像、粉丝数据、关注按钮、用户名、简介-->
   <div class="info">
     <div class="top">
-      <!--      <div class = "avatar">-->
-      <!--        <img src = "@/assets/img/cat.jpeg" alt = "avatar">-->
-      <!--      </div>-->
-      <a-avatar class="avatar" :size="88" icon="user" :src="avatar" />
-      <!--      <div class="invisible"></div>-->
+      <div class="left">
+        <!--todo        点击预览和保存-->
+        <a-avatar class="avatar" :size="100" icon="user" :src="avatar" />
+      </div>
       <div class="right">
         <div class="data">
           <div class="fans">
@@ -79,60 +78,44 @@ let onFollow = (): void => {
   flex-direction: column;
   width: 100vw;
   height: auto;
-  z-index: 0;
   background-color: #fff;
   border-bottom: rgba(0, 0, 0, 0.2) 1px solid;
-  margin-top: -2rem;
+  box-sizing: border-box;
+  //filter: drop-shadow(0 0 0.2rem white);
 
   .top {
-    z-index: 1;
     width: 100%;
     height: auto;
     display: flex;
     align-items: center;
-    box-shadow: white 0 0 0.5rem 0;
+    justify-content: center;
     position: relative;
-    padding: 0;
-    //margin-top: -0.5rem;
+    padding: 0 0 0.6rem;
 
-    .avatar {
-      width: 5.5rem;
-      height: 5.5rem;
-      border-radius: 50%;
-      box-shadow: white 0 0 0.5rem 0;
-      overflow: hidden;
-      margin: 1rem;
-      top: -2rem;
-      position: relative;
+    .left {
+      height: auto;
+      display: flex;
+      flex: 2;
+      justify-content: center;
+      align-items: center;
 
-      img {
-        width: 5.5rem;
-        height: 5.5rem;
-        object-fit: cover;
+      .avatar {
+        top: -1.5rem;
+        position: relative;
       }
     }
 
-    .invisible {
-      z-index: -1;
-      width: 5.5rem;
-      height: 5.5rem;
-      border-radius: 50%;
-      background-color: #fff;
-      margin: 1rem;
-      top: -2rem;
-      position: relative;
-      box-shadow: white 0 -0.2rem 0.2rem;
-    }
-
     .right {
-      width: 100%;
+      height: auto;
       display: flex;
-      flex: 1;
+      flex: 3;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      margin: 0 1rem 0 1rem;
 
       .data {
+        width: 100%;
         display: flex;
         flex: 1;
         flex-direction: row;
@@ -140,25 +123,25 @@ let onFollow = (): void => {
         margin-bottom: 0.2rem;
 
         .fans {
+          width: 33.3%;
           display: flex;
           flex-direction: column;
-          margin-right: 1.3rem;
           align-items: center;
         }
 
         .follow {
+          width: 33.3%;
           display: flex;
           flex-direction: column;
-          padding: 0 1.3rem 0 1.3rem;
           align-items: center;
           border-left: rgba(0, 0, 0, 0.2) 1px solid;
           border-right: rgba(0, 0, 0, 0.2) 1px solid;
         }
 
         .likes {
+          width: 33.3%;
           display: flex;
           flex-direction: column;
-          padding-left: 1.3rem;
           align-items: center;
         }
 
@@ -173,7 +156,7 @@ let onFollow = (): void => {
       }
 
       .button {
-        width: 90%;
+        width: 100%;
         position: relative;
         color: white;
         letter-spacing: 0.4rem;
@@ -185,7 +168,7 @@ let onFollow = (): void => {
     display: flex;
     flex-direction: column;
     text-align: left;
-    margin: 0 0 0.8rem 1rem;
+    margin: 0 1rem 0.8rem 1rem;
 
     .name {
       font-size: 1.3rem;
