@@ -12,14 +12,18 @@
             <span class="title">粉丝</span>
             <span class="data">{{ fans }}</span>
           </div>
-          <div class="follow">
-            <span class="title">关注</span>
-            <span class="data">{{ follow }}</span>
+          <div class="time">
+            <span class="title">直播时长</span>
+            <span class="data">{{ time }}</span>
           </div>
-          <div class="likes">
-            <span class="title">获赞</span>
-            <span class="data">{{ likes }}</span>
-          </div>
+<!--          <div class="follow">-->
+<!--            <span class="title">关注</span>-->
+<!--            <span class="data">{{ follow }}</span>-->
+<!--          </div>-->
+<!--          <div class="likes">-->
+<!--            <span class="title">获赞</span>-->
+<!--            <span class="data">{{ likes }}</span>-->
+<!--          </div>-->
         </div>
         <CusButton
           id="follow"
@@ -45,6 +49,7 @@ import { Avatar as AAvatar } from 'ant-design-vue';
 const props = defineProps<{
   avatar: string;
   fans: number;
+  time: string;
   follow: number;
   likes: number;
   name: string;
@@ -55,6 +60,7 @@ const props = defineProps<{
 let followColor = ref(props.followed ? colors.colorSecondary : colors.colorPrimary);
 let followed = ref(props.followed);
 let fans = ref(props.fans);
+let time = ref(props.time);
 const emit = defineEmits(['update:fans']);
 // 点击关注
 let onFollow = (): void => {
@@ -113,7 +119,7 @@ let onFollow = (): void => {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin: 0 1rem 0 1rem;
+      margin: -1.5rem 1rem 0 1rem;
 
       .data {
         width: 100%;
@@ -126,23 +132,28 @@ let onFollow = (): void => {
         .fans {
           width: 33.3%;
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
+        }
+
+        .time {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 1rem;
         }
 
         .follow {
           width: 33.3%;
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
-          border-left: rgba(0, 0, 0, 0.2) 1px solid;
-          border-right: rgba(0, 0, 0, 0.2) 1px solid;
         }
 
         .likes {
           width: 33.3%;
           display: flex;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
         }
 
@@ -152,7 +163,8 @@ let onFollow = (): void => {
         }
 
         .data {
-          font-size: 1.2rem;
+          font-size: 1rem;
+          color: $color-primary;
         }
       }
 
@@ -174,7 +186,7 @@ let onFollow = (): void => {
     .name {
       font-size: 1.3rem;
       font-weight: normal;
-      color: #fb7299;
+      color: $color-primary;
       margin-bottom: 0.6rem;
     }
 
