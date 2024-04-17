@@ -45,6 +45,7 @@ import {
   MoreOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons-vue';
+import { Avatar as AAvatar } from 'ant-design-vue';
 
 const props = defineProps({
   avatar: String,

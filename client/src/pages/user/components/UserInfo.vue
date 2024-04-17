@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import colors from '@/assets/variables.module.scss';
+import { Avatar as AAvatar } from 'ant-design-vue';
 
 const props = defineProps<{
   avatar: string;

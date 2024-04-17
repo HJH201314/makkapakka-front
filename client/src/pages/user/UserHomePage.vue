@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import UserInfo from '@/pages/user/components/UserInfo.vue';
 import LiveCard from '@/pages/live/components/LiveCard.vue';
+import { useUserStore } from '@/stores/useUserStore';
 
 definePage({
   path: '/user/home',
   name: '用户 - 直播页',
 });
 
+const userStore = useUserStore();
 let fans = ref(111);
 let follow = ref(222);
 let likes = ref(333);
