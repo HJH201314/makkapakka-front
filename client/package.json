@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "MOCK=true vite --host",
-    "dev:no-mock": "MOCK=false vite --host",
+    "dev": "vite --host",
+    "dev:no-mock": "vite --host",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
