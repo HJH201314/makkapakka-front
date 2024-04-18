@@ -79,7 +79,7 @@ const useFeatureStore = defineStore('feature', () => {
       }
     });
 
-    return categories;
+    return [ { label: '全部', value: -1 }, ...categories];
   };
 
   const featureCategories = computed(() => {

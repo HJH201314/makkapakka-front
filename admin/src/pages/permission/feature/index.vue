@@ -2,15 +2,15 @@
   <div class="table-tree-container">
     <div class="list-tree-wrapper">
       <div class="list-tree-operator">
-        <t-input v-model="filterText" placeholder="请输入分类" @input="onInput">
+        <t-input v-model="filterText" placeholder="请输入分类" @change="onChange">
           <template #suffix-icon>
             <search-icon size="20px" />
           </template>
         </t-input>
-        <t-tree :data="featureCategories" hover expand-on-click-node :default-expanded="expanded" :filter="filterByText" />
+        <t-tree @click="onTreeClick" :data="featureCategories" hover expand-on-click-node :filter="filterByText" />
       </div>
       <div class="list-tree-content">
-        <feature-table />
+        <feature-table :feature-category="selectedCategory" />
       </div>
     </div>
   </div>
@@ -34,15 +34,17 @@ const { featureCategories } = useFeatureStore();
 
 const filterByText = ref();
 const filterText = ref();
+const selectedCategory = ref('');
 
-const expanded = ['0', '0-0', '0-1', '0-2', '0-3', '0-4'];
-
-const onInput = () => {
+const onChange = () => {
   filterByText.value = (node) => {
-    const rs = node.label.indexOf(filterText.value) >= 0;
-    return rs;
+    return node.label.indexOf(filterText.value) != -1;
   };
 };
+
+const onTreeClick = ({ node }) => {
+  selectedCategory.value = node.label;
+}
 </script>
 
 <style lang="less" scoped>

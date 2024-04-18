@@ -87,7 +87,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watchEffect } from 'vue';
 import { MessagePlugin, PrimaryTableCol, TableRowData, PageInfo } from 'tdesign-vue-next';
 import { getList } from '@/api/feature';
 import { useSettingStore } from '@/store';
@@ -99,18 +99,28 @@ import {
 } from '@/constants';
 import useFeatureStore from '@/hooks/biz/useFeatureStore';
 
+const props = withDefaults(defineProps<{
+  featureCategory: string;
+}>(), {
+  featureCategory: '',
+});
+
 const store = useSettingStore();
 const { features } = useFeatureStore();
 
-const getFeatureList = (features) => {
+const getFeatureList = (features, root) => {
   const list = [];
 
   features.forEach((feature, i) => {
     if (feature.children && feature.children.length > 0) {
-      const childList = getFeatureList(feature.children);
+      const childList = getFeatureList(feature.children, feature);
       list.push(...childList);
     } else {
-      list.push({ ...feature, type: features[i].name, status: feature.status ? 0 : 1 });
+      // 过滤机制
+      if (props.featureCategory && props.featureCategory != '全部' && root.name != props.featureCategory) {
+        return;
+      }
+      list.push({ ...feature, type: root.name || '', status: feature.status ? 0 : 1 });
     }
   });
   console.log(list)
@@ -118,7 +128,7 @@ const getFeatureList = (features) => {
 };
 
 const featureList = computed(() => {
-  return getFeatureList(features);
+  return getFeatureList(features, {});
 });
 
 const COLUMNS: PrimaryTableCol<TableRowData>[] = [
@@ -159,6 +169,10 @@ const formData = ref({ ...searchForm });
 const rowKey = 'index';
 const verticalAlign = 'top' as const;
 const hover = true;
+
+watchEffect(() => {
+  formData.value.name = searchForm.name;
+});
 
 const pagination = ref({
   defaultPageSize: 20,
@@ -241,7 +255,7 @@ function handleClickEnable(row) {
 }
 
 function handleClickDisable(row) {
-  
+
 }
 
 const headerAffixedTop = computed(
