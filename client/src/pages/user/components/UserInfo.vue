@@ -104,7 +104,7 @@ const onPostAppointment = (): void => {
   width: 100vw;
   height: auto;
   background-color: #fff;
-  border-bottom: rgba(0, 0, 0, 0.2) 1px solid;
+  border-bottom: rgba(0, 0, 0, 0.1) 1px solid;
   box-sizing: border-box;
   //filter: drop-shadow(0 0 0.2rem white);
 

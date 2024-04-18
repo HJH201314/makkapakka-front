@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import UserInfo from '@/pages/user/components/UserInfo.vue';
 import LiveCard from '@/pages/live/components/LiveCard.vue';
-import {LeftOutlined} from '@ant-design/icons-vue';
-import {useUserStore} from '@/stores/useUserStore';
-import {useIntersectionObserver} from '@vueuse/core';
+import { LeftOutlined } from '@ant-design/icons-vue';
+import { useUserStore } from '@/stores/useUserStore';
+import { useIntersectionObserver } from '@vueuse/core';
 import Appointment from '@/pages/live/components/appointment.vue';
 
 definePage({
@@ -15,7 +15,6 @@ definePage({
 const realPageTopRef = ref();
 useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {
   if (!isIntersecting) {
-
   }
 });
 
@@ -42,7 +41,9 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
     />
     <div class="toolbar">
       <!-- 返回按钮 -->
-      <div class="back-icon"><LeftOutlined style="color: white;" /></div>
+      <div class="back-icon">
+        <LeftOutlined style="color: white" />
+      </div>
     </div>
     <div class="real-page">
       <div
@@ -62,6 +63,7 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
       />
       <div class="white-area">
         <div class="living">
+          <Appointment :is-myself="true" :title="name" :date="date" :num="111" :appointed="false" />
           <LiveCard
             :avatar="userStore.userInfo.avatarUrl || avatar"
             :name="userStore.userInfo.name || name"
@@ -96,7 +98,7 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
   .toolbar {
     z-index: 10;
     position: fixed;
-    top: 0;
+    top: 2rem;
     left: 0;
     right: 0;
     padding: 1rem;
@@ -124,5 +126,4 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
     }
   }
 }
-
 </style>
