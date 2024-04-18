@@ -109,7 +109,8 @@ const props = defineProps({
   margin-bottom: 0.6rem;
 
   .title {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    margin: 0.2rem 0 0 0.2rem;
   }
 }
 

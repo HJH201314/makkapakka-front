@@ -1,50 +1,50 @@
 <template>
   <!--    用户信息，包含：头像、粉丝数据、关注按钮、用户名、简介-->
-  <div class="info">
-    <div class="top">
-      <div class="left">
+  <div class = "info">
+    <div class = "top">
+      <div class = "left">
         <!--todo        点击预览和保存-->
-        <a-avatar class="avatar" :size="100" icon="user" :src="avatar" />
+        <a-avatar class = "avatar" :size = "100" icon = "user" :src = "avatar"/>
       </div>
-      <div class="right">
-        <div class="data">
-          <div class="fans">
-            <span class="title">粉丝</span>
-            <span class="data">{{ fans }}</span>
+      <div class = "right">
+        <div class = "data">
+          <div class = "fans">
+            <span class = "title">粉丝</span>
+            <span class = "data">{{ fans }}</span>
           </div>
-          <div class="time">
-            <span class="title">直播时长</span>
-            <span class="data">{{ time }}</span>
+          <div class = "time">
+            <span class = "title">直播时长</span>
+            <span class = "data">{{ time }}</span>
           </div>
-<!--          <div class="follow">-->
-<!--            <span class="title">关注</span>-->
-<!--            <span class="data">{{ follow }}</span>-->
-<!--          </div>-->
-<!--          <div class="likes">-->
-<!--            <span class="title">获赞</span>-->
-<!--            <span class="data">{{ likes }}</span>-->
-<!--          </div>-->
+          <!--          <div class="follow">-->
+          <!--            <span class="title">关注</span>-->
+          <!--            <span class="data">{{ follow }}</span>-->
+          <!--          </div>-->
+          <!--          <div class="likes">-->
+          <!--            <span class="title">获赞</span>-->
+          <!--            <span class="data">{{ likes }}</span>-->
+          <!--          </div>-->
         </div>
         <CusButton
-          id="follow"
-          class="button"
-          @click="onFollow()"
-          :style="{ backgroundColor: followColor }"
-          >{{ followed ? '已关注' : '关注' }}
+          id = "follow"
+          class = "button"
+          @click = "onFollow()"
+          :style = "{ backgroundColor: followColor }"
+        >{{ followed ? '已关注' : '关注' }}
         </CusButton>
       </div>
     </div>
-    <div class="detail">
-      <div class="name">{{ name }}</div>
-      <div class="desc">{{ desc }}</div>
+    <div class = "detail">
+      <div class = "name">{{ name }}</div>
+      <div class = "desc">{{ desc }}</div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
+<script setup lang = "ts">
+import {ref} from 'vue';
 import colors from '@/assets/variables.module.scss';
-import { Avatar as AAvatar } from 'ant-design-vue';
+import {Avatar as AAvatar} from 'ant-design-vue';
 
 const props = defineProps<{
   avatar: string;
@@ -77,7 +77,7 @@ let onFollow = (): void => {
 };
 </script>
 
-<style scoped lang="scss">
+<style scoped lang = "scss">
 @import '@/assets/main';
 
 .info {
@@ -97,7 +97,6 @@ let onFollow = (): void => {
     align-items: center;
     justify-content: center;
     position: relative;
-    padding: 0 0 0.6rem;
 
     .left {
       height: auto;
