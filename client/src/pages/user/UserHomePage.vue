@@ -1,4 +1,4 @@
-<script setup lang = "ts">
+<script setup lang="ts">
 import UserInfo from '@/pages/user/components/UserInfo.vue';
 import LiveCard from '@/pages/live/components/LiveCard.vue';
 import {LeftOutlined} from '@ant-design/icons-vue';
@@ -13,8 +13,9 @@ definePage({
 
 // 观测页面顶部是否移出
 const realPageTopRef = ref();
-useIntersectionObserver(realPageTopRef, ([{isIntersecting}]) => {
+useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {
   if (!isIntersecting) {
+
   }
 });
 
@@ -31,51 +32,49 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
 </script>
 
 <template>
-  <div class = "user-page">
+  <div class="user-page">
     <!--    用户信息，包含：头像、粉丝数据、关注按钮、用户名、简介-->
     <img
-      style = "position: absolute; width: 100vw; z-index: -1"
-      src = "https://img2.imgtp.com/2024/04/11/nmd5j2r5.jpg"
-      class = "test"
-      alt = ""
+      style="position: absolute; width: 100vw; z-index: -1"
+      src="https://img2.imgtp.com/2024/04/11/nmd5j2r5.jpg"
+      class="test"
+      alt=""
     />
-    <div class = "toolbar">
+    <div class="toolbar">
       <!-- 返回按钮 -->
-      <div class = "back-icon">
-        <LeftOutlined style = "color: white"/>
-      </div>
+      <div class="back-icon"><LeftOutlined style="color: white;" /></div>
     </div>
-    <div class = "real-page">
+    <div class="real-page">
       <div
-        ref = "realPageTopRef"
-        style = "margin-top: 10rem; box-shadow: 0 -5px 20px 10px rgba(0, 0, 0, 0.23)"
+        ref="realPageTopRef"
+        style="margin-top: 10rem; box-shadow: 0 -5px 20px 10px rgba(0, 0, 0, 0.23)"
       ></div>
       <UserInfo
-        :avatar = "userStore.userInfo.avatarUrl || avatar"
-        v-model:fans = "fans"
-        v-model:follow = "follow"
-        v-model:likes = "likes"
-        v-model:time = "time"
-        :name = "userStore.userInfo.name || name"
-        :desc = "userStore.userInfo.description || '我个人认为这个意大利面就应该拌42号混凝土。'"
-        :followed = "false"
+        :is-myself="true"
+        :avatar="userStore.userInfo.avatarUrl || avatar"
+        v-model:fans="fans"
+        v-model:follow="follow"
+        v-model:likes="likes"
+        v-model:time="time"
+        :name="userStore.userInfo.name || name"
+        :desc="userStore.userInfo.description || '我个人认为这个意大利面就应该拌42号混凝土。'"
+        :followed="false"
       />
-      <div class = "white-area">
-        <div class = "living">
-          <Appointment title = "test" :date = "date" :num = "111" :appointed = "false"/>
+      <div class="white-area">
+        <div class="living">
           <LiveCard
-            :avatar = "userStore.userInfo.avatarUrl || avatar"
-            :name = "userStore.userInfo.name || name"
-            :coverURL = "coverURL"
-            title = "test1"
+            :avatar="userStore.userInfo.avatarUrl || avatar"
+            :name="userStore.userInfo.name || name"
+            :coverURL="coverURL"
+            title="嘿嘿嘿"
           />
         </div>
-        <div class = "living">
+        <div class="living">
           <LiveCard
-            :avatar = "userStore.userInfo.avatarUrl || avatar"
-            :name = "userStore.userInfo.name || name"
-            :coverURL = "coverURL"
-            title = "test2"
+            :avatar="userStore.userInfo.avatarUrl || avatar"
+            :name="userStore.userInfo.name || name"
+            :coverURL="coverURL"
+            title="嘿嘿嘿"
           />
         </div>
       </div>
@@ -83,7 +82,7 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
   </div>
 </template>
 
-<style scoped lang = "scss">
+<style scoped lang="scss">
 @import '@/assets/main';
 
 .user-page {
@@ -125,4 +124,5 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
     }
   }
 }
+
 </style>
