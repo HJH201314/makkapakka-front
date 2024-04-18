@@ -16,21 +16,32 @@
             <span class="title">直播时长</span>
             <span class="data">{{ time }}</span>
           </div>
-<!--          <div class="follow">-->
-<!--            <span class="title">关注</span>-->
-<!--            <span class="data">{{ follow }}</span>-->
-<!--          </div>-->
-<!--          <div class="likes">-->
-<!--            <span class="title">获赞</span>-->
-<!--            <span class="data">{{ likes }}</span>-->
-<!--          </div>-->
+          <!--          <div class="follow">-->
+          <!--            <span class="title">关注</span>-->
+          <!--            <span class="data">{{ follow }}</span>-->
+          <!--          </div>-->
+          <!--          <div class="likes">-->
+          <!--            <span class="title">获赞</span>-->
+          <!--            <span class="data">{{ likes }}</span>-->
+          <!--          </div>-->
         </div>
         <CusButton
+          v-if="!isMyself"
           id="follow"
           class="button"
           @click="onFollow()"
           :style="{ backgroundColor: followColor }"
           >{{ followed ? '已关注' : '关注' }}
+        </CusButton>
+        <CusButton
+          v-else
+          type="default"
+          id="appointment"
+          class="button"
+          @click="onPostAppointment()"
+          :style="{ color: colors.colorPrimary }"
+        >
+          发布预约
         </CusButton>
       </div>
     </div>
@@ -47,6 +58,8 @@ import colors from '@/assets/variables.module.scss';
 import { Avatar as AAvatar } from 'ant-design-vue';
 
 const props = defineProps<{
+  // 是否是自己
+  isMyself: boolean;
   avatar: string;
   fans: number;
   time: string;
@@ -74,6 +87,11 @@ let onFollow = (): void => {
     console.log('取消关注' + fans.value);
   }
   emit('update:fans', fans.value);
+};
+
+const onPostAppointment = (): void => {
+  // todo: 发布预约
+  console.log('发布预约');
 };
 </script>
 

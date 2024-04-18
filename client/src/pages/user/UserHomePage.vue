@@ -14,7 +14,6 @@ definePage({
 const realPageTopRef = ref();
 useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {
   if (!isIntersecting) {
-
   }
 });
 
@@ -32,14 +31,23 @@ let coverURL = ref('https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
 <template>
   <div class="user-page">
     <!--    用户信息，包含：头像、粉丝数据、关注按钮、用户名、简介-->
-    <img style="position: absolute; width: 100vw; z-index: -1;" src="https://img2.imgtp.com/2024/04/11/nmd5j2r5.jpg" class="test" alt="" />
+    <img
+      style="position: absolute; width: 100vw; z-index: -1"
+      src="https://img2.imgtp.com/2024/04/11/nmd5j2r5.jpg"
+      class="test"
+      alt=""
+    />
     <div class="toolbar">
       <!-- 返回按钮 -->
-      <div class="back-icon"><LeftOutlined style="color: white;" /></div>
+      <div class="back-icon"><LeftOutlined style="color: white" /></div>
     </div>
     <div class="real-page">
-      <div ref="realPageTopRef" style="margin-top: 10rem; box-shadow: 0 -5px 20px 10px rgba(0, 0, 0, .23)"></div>
+      <div
+        ref="realPageTopRef"
+        style="margin-top: 10rem; box-shadow: 0 -5px 20px 10px rgba(0, 0, 0, 0.23)"
+      ></div>
       <UserInfo
+        :is-myself="true"
         :avatar="userStore.userInfo.avatarUrl || avatar"
         v-model:fans="fans"
         v-model:follow="follow"
@@ -51,10 +59,20 @@ let coverURL = ref('https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
       />
       <div class="white-area">
         <div class="living">
-          <LiveCard :avatar="userStore.userInfo.avatarUrl || avatar" :name="userStore.userInfo.name || name" :coverURL="coverURL" title="嘿嘿嘿" />
+          <LiveCard
+            :avatar="userStore.userInfo.avatarUrl || avatar"
+            :name="userStore.userInfo.name || name"
+            :coverURL="coverURL"
+            title="嘿嘿嘿"
+          />
         </div>
         <div class="living">
-          <LiveCard :avatar="userStore.userInfo.avatarUrl || avatar" :name="userStore.userInfo.name || name" :coverURL="coverURL" title="嘿嘿嘿" />
+          <LiveCard
+            :avatar="userStore.userInfo.avatarUrl || avatar"
+            :name="userStore.userInfo.name || name"
+            :coverURL="coverURL"
+            title="嘿嘿嘿"
+          />
         </div>
       </div>
     </div>
@@ -103,5 +121,4 @@ let coverURL = ref('https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
     }
   }
 }
-
 </style>
