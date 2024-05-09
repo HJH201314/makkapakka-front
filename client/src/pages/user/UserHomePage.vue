@@ -15,6 +15,7 @@ definePage({
 const realPageTopRef = ref();
 useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {
   if (!isIntersecting) {
+    // ignore
   }
 });
 
@@ -58,7 +59,7 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
         v-model:likes="likes"
         v-model:time="time"
         :name="userStore.userInfo.name || name"
-        :desc="userStore.userInfo.description || '我个人认为这个意大利面就应该拌42号混凝土。'"
+        :desc="userStore.userInfo.description || '啊哦，这个直播间还没有介绍 TAT'"
         :followed="false"
       />
       <div class="white-area">
