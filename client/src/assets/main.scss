@@ -9,3 +9,14 @@ body {
   height: 100dvh;
   width: 100dvw;
 }
+
+@function w($width) {
+  $max-width: 375px; // 定义最大宽度
+
+  @if $width == $max-width {
+    @return 100vw; // 如果输入的是最大宽度，则返回 100vw
+  } @else {
+    $vw-width: ($width / $max-width) * 100vw; // 将输入的宽度转换为视口宽度
+    @return $vw-width;
+  }
+}
