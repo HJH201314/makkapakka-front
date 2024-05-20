@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
-const responseText = ref('');
-
-onMounted(() => {
-  fetch('/api/test')
-    .then((res) => res.text())
-    .then((text) => {
-      responseText.value = text;
-    });
-});
+import PostAppointment from '@/pages/live/components/postAppointment.vue';
 </script>
 
 <template>
-  <div>{{ responseText }}</div>
+  <div class="outer">
+    <PostAppointment />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss"></style>

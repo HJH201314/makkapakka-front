@@ -16,14 +16,6 @@
             <span class="title">直播时长</span>
             <span class="data">{{ time }}</span>
           </div>
-          <!--          <div class="follow">-->
-          <!--            <span class="title">关注</span>-->
-          <!--            <span class="data">{{ follow }}</span>-->
-          <!--          </div>-->
-          <!--          <div class="likes">-->
-          <!--            <span class="title">获赞</span>-->
-          <!--            <span class="data">{{ likes }}</span>-->
-          <!--          </div>-->
         </div>
         <CusButton
           v-if="!isMyself"
@@ -33,14 +25,7 @@
           :style="{ backgroundColor: followColor }"
           >{{ followed ? '已关注' : '关注' }}
         </CusButton>
-        <CusButton
-          v-else
-          type="default"
-          id="appointment"
-          class="button"
-          @click="onPostAppointment()"
-          :style="{ color: colors.colorPrimary }"
-        >
+        <CusButton v-else type="primary" id="appointment" class="button" @click="onPost">
           发布预约
         </CusButton>
       </div>
@@ -50,12 +35,17 @@
       <div class="desc">{{ desc }}</div>
     </div>
   </div>
+  <transition name="slide">
+    <PostAppointment v-show="isOnPost" />
+  </transition>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import colors from '@/assets/variables.module.scss';
 import { Avatar as AAvatar } from 'ant-design-vue';
+import PostAppointment from '@/pages/live/components/postAppointment.vue';
+import { confirm_layer } from '@/pages/live/components/confirm_layer';
 
 const props = defineProps<{
   // 是否是自己
@@ -63,7 +53,6 @@ const props = defineProps<{
   avatar: string;
   fans: number;
   time: string;
-  follow: number;
   likes: number;
   name: string;
   desc: string;
@@ -74,24 +63,29 @@ let followColor = ref(props.followed ? colors.colorSecondary : colors.colorPrima
 let followed = ref(props.followed);
 let fans = ref(props.fans);
 let time = ref(props.time);
-const emit = defineEmits(['update:fans']);
+
 // 点击关注
+const emit = defineEmits(['update:fans']);
 let onFollow = (): void => {
   followed.value = !followed.value;
   followColor.value = followed.value ? colors.colorSecondary : colors.colorPrimary;
   if (followed.value) {
     fans.value++;
-    console.log('关注成功' + fans.value);
   } else {
     fans.value--;
-    console.log('取消关注' + fans.value);
   }
   emit('update:fans', fans.value);
 };
 
-const onPostAppointment = (): void => {
-  // todo: 发布预约
+// 发布预约
+let isOnPost = ref(false);
+let onPost = () => {
   console.log('发布预约');
+  const div = confirm_layer();
+  isOnPost.value = true;
+  div.addEventListener('click', () => {
+    isOnPost.value = false;
+  });
 };
 </script>
 
@@ -101,7 +95,7 @@ const onPostAppointment = (): void => {
 .info {
   display: flex;
   flex-direction: column;
-  width: 100vw;
+  width: w(375px);
   height: auto;
   background-color: #fff;
   border-bottom: rgba(0, 0, 0, 0.1) 1px solid;
@@ -212,5 +206,15 @@ const onPostAppointment = (): void => {
       font-size: 0.8rem;
     }
   }
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.2s ease-in-out;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateY(100%);
 }
 </style>
