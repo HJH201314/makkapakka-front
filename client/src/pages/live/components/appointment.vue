@@ -4,31 +4,37 @@
       <div class="left">
         <div class="title">直播预约：{{ title }}</div>
         <div class="time">{{ dateString }} 进行直播</div>
-        <div class="num">{{ num }} 人预约</div>
+        <!--        <div class="num">{{ num }} 人预约</div>-->
       </div>
       <div class="right">
-        <CusButton
-          v-if="!isMyself"
+        <button
+          v-if="isMyself"
+          id="withdraw"
+          class="button"
+          :style="{ backgroundColor: colors.colorPrimary }"
+          @click="openWithdrawNotification()"
+        >
+          {{ '撤销' }}
+        </button>
+        <button
+          v-else
           id="appoint"
           class="button"
           @click="onAppoint()"
-          :color="buttonColor"
-          :type="'primary'"
-          :primary="!appointed"
-          :secondary="appointed"
-          >{{ appointed ? '已预约' : '预约' }}
-        </CusButton>
-        <CusButton v-else type="primary" id="withdraw" class="button" @click="onWithdraw()"
-          >{{ '撤销' }}
-        </CusButton>
+          :style="{ backgroundColor: buttonColor }"
+        >
+          {{ buttonWords }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, ref } from 'vue';
+import { defineProps, ref } from 'vue';
 import colors from '@/assets/variables.module.scss';
+import { Button, notification } from 'ant-design-vue';
+import { confirm_layer } from '@/pages/live/components/confirm_layer';
 
 const props = defineProps<{
   isMyself: boolean;
@@ -40,21 +46,97 @@ const props = defineProps<{
 let num = ref(props.num ? props.num : 0);
 let date = ref(new Date(props.date || new Date()));
 let appointed = ref(props.appointed);
+let buttonWords = ref(appointed.value ? '已预约' : '预约');
 let buttonColor = computed(() => (appointed.value ? colors.colorSecondary : colors.colorPrimary));
-/* 预约直播 */
+
+/* 预约直播 - 用户 */
+// todo
 const onAppoint = () => {
-  appointed.value = !appointed.value;
-  if (!appointed.value) {
+  if (appointed.value) {
     num.value = +num.value - 1;
+    const key = 'appoint';
+    const div = confirm_layer();
+    notification.open({
+      key,
+      message: '取消预约',
+      description: '是否取消预约？',
+      placement: 'bottom',
+      duration: null,
+      btn: () =>
+        h(
+          Button,
+          {
+            type: 'primary',
+            size: 'small',
+            style: `background-color: ${colors.colorPrimary}; border-color: ${colors.colorPrimary};`,
+            onClick: () => {
+              // todo 取消预约
+              notification.close(key);
+              appointed.value = !appointed.value;
+              buttonWords.value = '预约';
+              div.remove();
+            },
+          },
+          { default: () => '确定' }
+        ),
+      onClose: () => {
+        div.remove();
+      },
+    });
+    div.addEventListener('click', () => {
+      notification.close(key);
+    });
     console.log('取消预约');
   } else {
+    appointed.value = !appointed.value;
+    buttonWords.value = '已预约';
     num.value = +num.value + 1;
     console.log('预约成功');
+    // todo 预约成功
+    window.AndroidInterface.subscribeNextBroadcast?.(Date.now(), 'aaa');
   }
 };
-/*撤销预约*/
-const onWithdraw = () => {
+
+// notification 全局配置
+notification.config({
+  maxCount: 1,
+});
+
+/*撤销预约 - 主播 */
+const emit = defineEmits(['update:appointed']);
+const openWithdrawNotification = () => {
   console.log('撤销预约');
+  const key = 'withdraw';
+  const div = confirm_layer();
+  notification.open({
+    key,
+    message: '撤销预约？',
+    description: '撤销后，将通知已预约的用户。',
+    placement: 'bottom',
+    duration: null,
+    btn: () =>
+      h(
+        Button,
+        {
+          type: 'primary',
+          size: 'small',
+          style: `background-color: ${colors.colorPrimary}; border-color: ${colors.colorPrimary};`,
+          onClick: () => {
+            // todo 撤销预约
+            notification.close(key);
+            div.remove();
+            emit('update:appointed', false);
+          },
+        },
+        { default: () => '确定' }
+      ),
+    onClose: () => {
+      div.remove();
+    },
+  });
+  div.addEventListener('click', () => {
+    notification.close(key);
+  });
 };
 
 /* 日期换算-今天、明天、、*/
@@ -127,7 +209,10 @@ let dateString = ref(formatAppointmentTime(date.value));
         width: 60%;
         height: 1.5rem;
         color: white;
-        font-size: 0.6rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.1rem;
+        border: none;
+        border-radius: 0.3rem;
       }
     }
   }

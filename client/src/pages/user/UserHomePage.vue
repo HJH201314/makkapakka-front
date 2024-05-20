@@ -20,15 +20,16 @@ useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {
 });
 
 const userStore = useUserStore();
-
-let fans = ref(111);
-let follow = ref(222);
-let likes = ref(333);
-let time = ref('1h');
-let name = ref('啊啊啊');
-let avatar = ref('https://img2.imgtp.com/2024/04/11/it1yVDsC.jpg');
-let coverURL = ref('https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
-let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
+const uid = userStore.userInfo.id;
+const fans = ref(111);
+const likes = ref(333);
+const time = ref('1h');
+const name = ref('啊啊啊');
+const avatar = ref('https://img2.imgtp.com/2024/04/11/it1yVDsC.jpg');
+const coverURL = ref('https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
+const date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
+const appointed = ref(true);
+const isMyself = ref(false);
 </script>
 
 <template>
@@ -52,10 +53,9 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
         style="margin-top: 10rem; box-shadow: 0 -5px 20px 10px rgba(0, 0, 0, 0.23)"
       ></div>
       <UserInfo
-        :is-myself="true"
+        :is-myself="isMyself"
         :avatar="userStore.userInfo.avatarUrl || avatar"
         v-model:fans="fans"
-        v-model:follow="follow"
         v-model:likes="likes"
         v-model:time="time"
         :name="userStore.userInfo.name || name"
@@ -64,7 +64,14 @@ let date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
       />
       <div class="white-area">
         <div class="living">
-          <Appointment :is-myself="true" :title="name" :date="date" :num="111" :appointed="false" />
+          <Appointment
+            v-if="appointed"
+            :is-myself="isMyself"
+            :title="name"
+            :date="date"
+            :num="111"
+            v-model:appointed="appointed"
+          />
           <LiveCard
             :avatar="userStore.userInfo.avatarUrl || avatar"
             :name="userStore.userInfo.name || name"
