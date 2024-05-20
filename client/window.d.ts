@@ -10,6 +10,10 @@ declare global {
       subscribeNextBroadcast?: (timeInMillis: number, name: string) => void;
       // 获取 roomId
       getRoomId?: () => string;
+      // 关闭 webview
+      quit?: () => void;
+      // Toast 提示
+      showToast?: (msg: string, length: 'short' | 'long' = 'short') => void;
     };
   }
 }

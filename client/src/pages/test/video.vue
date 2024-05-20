@@ -1,8 +1,8 @@
 <script setup lang="ts">
-definePage({
-  name: '视频测试',
-  path: '/broadcast',
-});
+// definePage({
+//   name: '视频测试',
+//   path: '/broadcast',
+// });
 
 import { useDevicesList, useUserMedia } from '@vueuse/core';
 

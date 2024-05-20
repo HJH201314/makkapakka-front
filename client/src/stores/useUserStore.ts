@@ -10,8 +10,8 @@ export const useUserStore = defineStore('user', () => {
     syncInfoTimer = window.setTimeout(() => {
       // 仅在安卓中同步用户数据
       if (!browser.isAndroid()) return;
-      const _token = window.AndroidInterface.getToken();
-      const _user = window.AndroidInterface.getUser();
+      const _token = window.AndroidInterface.getToken?.();
+      const _user = window.AndroidInterface.getUser?.();
       console.log(_token);
       if (_token) {
         token.value = _token;
@@ -21,7 +21,7 @@ export const useUserStore = defineStore('user', () => {
         userInfo.value = JSON.parse(_user);
         localStorage.setItem('user', _user);
       }
-    }, 1000);
+    }, 0);
   });
 
   onBeforeUnmount(() => {
