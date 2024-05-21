@@ -22,6 +22,15 @@ export default () => {
     server: {
       https: true,
       port: 5173,
+      proxy: {
+        '/srs': {
+          target: 'http://swzx.fcraft.cn:11985',
+          rewrite(path) {
+            return path.replace(/^\/srs/, '');
+          },
+          changeOrigin: true,
+        },
+      },
     },
     plugins: [
       VueRouter({

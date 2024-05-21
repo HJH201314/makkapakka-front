@@ -5,6 +5,7 @@ import { FlipCamera, Power } from '@icon-park/vue-next';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
 import { generateRandomString } from '@/utils/string';
+import { useClientBackPressed } from '@/commands/useClientBackPressed';
 
 definePage({
   name: '直播中',
@@ -69,6 +70,11 @@ async function handleFlipCamera() {
     if (newCamera) {
       currentCamera.value = newCamera;
     }
+  } else {
+    // 未知情况，往后切一一个摄像头
+    newCamera = cameras.value.find((v) => {
+      return v.kind === 'videoinput' && v.deviceId != currentCamera.value?.deviceId;
+    });
   }
 
   if (newCamera) {
@@ -86,6 +92,7 @@ async function handleFlipCamera() {
     await videoSender.replaceTrack(newStream.getVideoTracks()[0]);
     stream = newStream;
     refreshVideoPlayback();
+    window.AndroidInterface.showToast?.('已切换摄像头');
   } else {
     window.AndroidInterface.showToast?.('切换摄像头失败');
   }
@@ -94,7 +101,7 @@ const debounceFlipCamera = useDebounceFn(() => handleFlipCamera(), 500);
 
 const router = useRouter();
 async function handleQuit() {
-  await clear();
+  await clearEffects();
   if (isAndroid()) {
     window.AndroidInterface.quit?.();
   } else {
@@ -103,10 +110,10 @@ async function handleQuit() {
 }
 
 // 关闭所有 effect
-async function clear() {
+async function clearEffects() {
   // stopStreamEffect();
-  await stopVideo();
   pc.close();
+  await stopVideo();
 }
 
 // const ffmpeg = new FFmpeg();
@@ -117,6 +124,8 @@ let stream: MediaStream | undefined = undefined;
 // rtc 连接
 const pc = new RTCPeerConnection();
 let videoSender: RTCRtpSender;
+
+const liveState = ref(0);
 
 async function initStreaming() {
   await startVideo();
@@ -166,11 +175,13 @@ async function initStreaming() {
   }
 }
 
+useClientBackPressed(() => {
+  clearEffects();
+  window.AndroidInterface.quit?.();
+  window.AndroidInterface.showToast?.('hello');
+});
+
 onMounted(async () => {
-  // usePopState(() => {
-  //   clear();
-  //   window.AndroidInterface.showToast?.('返回');
-  // });
   // 初始化视频和音频输入
   if (!cameras.value.length) {
     // 无视频源
@@ -183,7 +194,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
-  await clear();
+  await clearEffects();
 });
 </script>
 
@@ -191,10 +202,14 @@ onBeforeUnmount(async () => {
   <div class="broadcast">
     <video class="video" controls autoplay muted id="vid" />
     <div class="layer">
-      <div class="toolbar right-top" @click="handleQuit">
+      <div class="left-top">
+        <div class="state"></div>
+        <span>直播中</span>
+      </div>
+      <div class="icon right-top" @click="handleQuit">
         <Power />
       </div>
-      <div class="toolbar right-bottom" @click="debounceFlipCamera">
+      <div class="icon right-bottom" @click="debounceFlipCamera">
         <FlipCamera />
       </div>
       {{ cameras }}
@@ -221,10 +236,32 @@ onBeforeUnmount(async () => {
     z-index: 1;
     inset: 0;
 
-    .toolbar {
+    .icon {
       span {
-        color: #ffffff;
+        color: #fff;
         font-size: w(28px);
+      }
+    }
+
+    .left-top {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: w(80px);
+      height: w(40px);
+      border-radius: w(40px);
+      background: rgb(0 0 0 / 20%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      gap: w(5px);
+
+      .state {
+        width: w(10px);
+        height: w(10px);
+        border-radius: w(10px);
+        background: $color-success;
       }
     }
 
@@ -254,5 +291,42 @@ onBeforeUnmount(async () => {
       align-items: center;
     }
   }
+}
+
+// ========== 隐藏 video 控件 ==========
+/* 全屏按钮 */
+video::-webkit-media-controls-fullscreen-button {
+  display: none;
+}
+/* 播放按钮 */
+video::-webkit-media-controls-play-button {
+  display: none;
+}
+/* 进度条 */
+video::-webkit-media-controls-timeline {
+  display: none;
+}
+/* 观看的当前时间 */
+video::-webkit-media-controls-current-time-display {
+  display: none;
+}
+/* 剩余时间 */
+video::-webkit-media-controls-time-remaining-display {
+  display: none;
+}
+/* 音量按钮 */
+video::-webkit-media-controls-mute-button {
+  display: none;
+}
+video::-webkit-media-controls-toggle-closed-captions-button {
+  display: none;
+}
+/* 音量的控制条 */
+video::-webkit-media-controls-volume-slider {
+  display: none;
+}
+/* 所有控件 */
+video::-webkit-media-controls-enclosure {
+  display: none;
 }
 </style>
