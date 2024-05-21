@@ -16,8 +16,9 @@ const userStore = useUserStore();
 
 // 注意要使用 nginx 将 /srs/ 转发到 srs 的 1985 端口
 const tempId = generateRandomString(1);
-let whipUrl = computed(
-  () => `/srs/rtc/v1/whip/?app=room_${userStore.userInfo.id || 0}_${tempId}&stream=livestream`
+const roomId = computed(() => `room_${userStore.userInfo.id || 0}_${tempId}`);
+const whipUrl = computed(
+  () => `/srs/rtc/v1/whip/?app=${roomId.value}&stream=livestream&eip=111.230.21.98:18000`
 );
 
 const { videoInputs: cameras, audioInputs: microphones } = useDevicesList({
@@ -38,16 +39,11 @@ function refreshVideoPlayback() {
 }
 
 async function startVideo() {
-  stream = await navigator.mediaDevices.getUserMedia({
-    audio: true,
-    video: true,
-  });
   refreshVideoPlayback();
 }
 
 async function stopVideo() {
-  stream?.getVideoTracks().forEach((v) => v.stop());
-  stream = undefined;
+  stream.getVideoTracks().forEach((v) => v.stop());
   refreshVideoPlayback();
 }
 
@@ -97,6 +93,12 @@ async function handleFlipCamera() {
     window.AndroidInterface.showToast?.('切换摄像头失败');
   }
 }
+
+function handleGoLive() {
+  // window.AndroidInterface.openLiveRoom?.(tempId);
+  router.push(`/audience?forceRid=${roomId.value}`);
+}
+
 const debounceFlipCamera = useDebounceFn(() => handleFlipCamera(), 500);
 
 const router = useRouter();
@@ -120,24 +122,59 @@ async function clearEffects() {
 // let stopStreamEffect: WatchStopHandle;
 
 // 视频 + 音频 多轨 流
-let stream: MediaStream | undefined = undefined;
+let stream: MediaStream = new MediaStream();
 // rtc 连接
 const pc = new RTCPeerConnection();
+const pcState = ref(pc.connectionState);
+// 监听 connectionstatechange 事件
+pc.onconnectionstatechange = () => {
+  // 获取当前连接状态
+  const connectionState = pc.connectionState;
+  pcState.value = connectionState;
+
+  // 根据连接状态进行相应的处理
+  switch (connectionState) {
+    case 'new':
+      console.log('连接状态：new');
+      break;
+    case 'connected':
+      console.log('连接状态：connected');
+      break;
+    case 'disconnected':
+      console.log('连接状态：disconnected');
+      break;
+    case 'failed':
+      console.log('连接状态：failed');
+      break;
+    case 'closed':
+      console.log('连接状态：closed');
+      break;
+    default:
+      console.log('未知的连接状态：', connectionState);
+      break;
+  }
+};
 let videoSender: RTCRtpSender;
 
 const liveState = ref(0);
 
 async function initStreaming() {
-  await startVideo();
   if (!stream) return;
   // 开始连接
   try {
-    stream.getVideoTracks().forEach((track) => {
-      const s = pc.addTrack(track);
-      videoSender = s;
+    const s = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
     });
-    stream.getAudioTracks().forEach((track) => {
-      const s = pc.addTrack(track);
+    pc.addTransceiver('audio', { direction: 'sendonly' });
+    pc.addTransceiver('video', { direction: 'sendonly' });
+    s.getVideoTracks().forEach((track) => {
+      videoSender = pc.addTrack(track);
+      stream.addTrack(track);
+      refreshVideoPlayback();
+    });
+    s.getAudioTracks().forEach((track) => {
+      stream.addTrack(track);
     });
 
     const offer = await pc.createOffer();
@@ -176,9 +213,7 @@ async function initStreaming() {
 }
 
 useClientBackPressed(() => {
-  clearEffects();
-  window.AndroidInterface.quit?.();
-  window.AndroidInterface.showToast?.('hello');
+  handleQuit();
 });
 
 onMounted(async () => {
@@ -204,7 +239,7 @@ onBeforeUnmount(async () => {
     <div class="layer">
       <div class="left-top">
         <div class="state"></div>
-        <span>直播中</span>
+        <span>直播中 {{ pcState.toUpperCase() }}</span>
       </div>
       <div class="icon right-top" @click="handleQuit">
         <Power />
@@ -212,9 +247,12 @@ onBeforeUnmount(async () => {
       <div class="icon right-bottom" @click="debounceFlipCamera">
         <FlipCamera />
       </div>
-      {{ cameras }}
-      ///
-      {{ currentCamera }}
+      <div class="left-bottom" @click="handleGoLive">查看直播间</div>
+<!--      <div style="color: rgba(0 0 0 / 10%); z-index: -1">-->
+<!--        {{ cameras }}-->
+<!--        ///-->
+<!--        {{ currentCamera }}-->
+<!--      </div>-->
     </div>
   </div>
 </template>
@@ -247,7 +285,8 @@ onBeforeUnmount(async () => {
       position: absolute;
       top: 1rem;
       left: 1rem;
-      width: w(80px);
+      padding-left: w(10px);
+      padding-right: w(10px);
       height: w(40px);
       border-radius: w(40px);
       background: rgb(0 0 0 / 20%);
@@ -263,6 +302,22 @@ onBeforeUnmount(async () => {
         border-radius: w(10px);
         background: $color-success;
       }
+    }
+
+    .left-bottom {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      padding-left: w(20px);
+      padding-right: w(20px);
+      height: w(40px);
+      border-radius: w(40px);
+      background: rgb(0 0 0 / 20%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      gap: w(5px);
     }
 
     .right-top {
