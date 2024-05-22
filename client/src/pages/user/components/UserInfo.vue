@@ -36,7 +36,7 @@
     </div>
   </div>
   <transition name="slide">
-    <PostAppointment v-show="isOnPost" />
+    <PostAppointment v-show="isOnPost" :appointed="appointed" />
   </transition>
 </template>
 
@@ -53,10 +53,10 @@ const props = defineProps<{
   avatar: string;
   fans: number;
   time: string;
-  likes: number;
   name: string;
   desc: string;
   followed: boolean;
+  appointed: boolean;
 }>();
 
 let followColor = ref(props.followed ? colors.colorSecondary : colors.colorPrimary);

@@ -5,6 +5,7 @@ import { LeftOutlined } from '@ant-design/icons-vue';
 import { useUserStore } from '@/stores/useUserStore';
 import { useIntersectionObserver } from '@vueuse/core';
 import Appointment from '@/pages/live/components/appointment.vue';
+import { useClientBackPressed } from '@/commands/useClientBackPressed';
 
 definePage({
   path: '/user/home',
@@ -19,17 +20,20 @@ useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {
   }
 });
 
-const userStore = useUserStore();
-const uid = userStore.userInfo.id;
+const userInfo = useUserStore().userInfo;
 const fans = ref(111);
 const likes = ref(333);
 const time = ref('1h');
-const name = ref('啊啊啊');
-const avatar = ref('https://img2.imgtp.com/2024/04/11/it1yVDsC.jpg');
+const name = ref(userInfo.name || '用户');
+const avatarUrl = ref(userInfo.avatarUrl || 'https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
 const coverURL = ref('https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
 const date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
 const appointed = ref(true);
-const isMyself = ref(false);
+const isMyself = ref(true);
+
+useClientBackPressed(() => {
+  window.AndroidInterface?.quit?.();
+});
 </script>
 
 <template>
@@ -54,12 +58,13 @@ const isMyself = ref(false);
       ></div>
       <UserInfo
         :is-myself="isMyself"
-        :avatar="userStore.userInfo.avatarUrl || avatar"
+        :avatar="userInfo.avatarUrl || avatarUrl"
+        :appointed="appointed"
         v-model:fans="fans"
         v-model:likes="likes"
         v-model:time="time"
-        :name="userStore.userInfo.name || name"
-        :desc="userStore.userInfo.description || '啊哦，这个直播间还没有介绍 TAT'"
+        :name="userInfo.name || name"
+        :desc="userInfo.description || '啊哦，这个直播间还没有介绍 TAT'"
         :followed="false"
       />
       <div class="white-area">
@@ -69,20 +74,19 @@ const isMyself = ref(false);
             :is-myself="isMyself"
             :title="name"
             :date="date"
-            :num="111"
             v-model:appointed="appointed"
           />
           <LiveCard
-            :avatar="userStore.userInfo.avatarUrl || avatar"
-            :name="userStore.userInfo.name || name"
+            :avatar="userInfo.avatarUrl || avatarUrl"
+            :name="userInfo.name || name"
             :coverURL="coverURL"
             title="嘿嘿嘿"
           />
         </div>
         <div class="living">
           <LiveCard
-            :avatar="userStore.userInfo.avatarUrl || avatar"
-            :name="userStore.userInfo.name || name"
+            :avatar="userInfo.avatarUrl || avatarUrl"
+            :name="userInfo.name || name"
             :coverURL="coverURL"
             title="嘿嘿嘿"
           />
@@ -106,7 +110,7 @@ const isMyself = ref(false);
   .toolbar {
     z-index: 10;
     position: fixed;
-    top: 2rem;
+    top: 1rem;
     left: 0;
     right: 0;
     padding: 1rem;
