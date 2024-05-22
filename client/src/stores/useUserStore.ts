@@ -4,14 +4,18 @@ import browser from '@/utils/browser.util';
 export const useUserStore = defineStore('user', () => {
   let syncInfoTimer: number;
   const token = ref('');
-  const userInfo = ref<API.UserInfo>({});
+  const userInfo = ref<API.UserInfo>({
+    id: 0,
+    name: '未命名',
+    avatarUrl: '/favicon.ico',
+  });
 
   onMounted(() => {
     syncInfoTimer = window.setTimeout(() => {
       // 仅在安卓中同步用户数据
       if (!browser.isAndroid()) return;
-      const _token = window.AndroidInterface.getToken?.();
-      const _user = window.AndroidInterface.getUser?.();
+      const _token = window.AndroidInterface?.getToken?.();
+      const _user = window.AndroidInterface?.getUser?.();
       console.log(_token);
       if (_token) {
         token.value = _token;

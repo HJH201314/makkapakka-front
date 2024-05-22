@@ -30,6 +30,13 @@ export default () => {
           },
           changeOrigin: true,
         },
+        '/api': {
+          target: 'http://172.29.19.242:8088',
+          rewrite(path) {
+            return path.replace(/^\/api/, '');
+          },
+          changeOrigin: true,
+        },
       },
     },
     plugins: [

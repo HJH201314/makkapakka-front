@@ -5,6 +5,7 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { isAndroid } from '@/utils/browser.util';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
+import { AndroidUtil } from '@/utils/android.util';
 
 definePage({
   name: '观众',
@@ -67,7 +68,7 @@ const router = useRouter();
 async function handleQuit() {
   await clearEffects();
   if (isAndroid()) {
-    window.AndroidInterface.quit?.();
+    window.AndroidInterface?.quit?.();
   } else {
     router.back();
   }
@@ -152,7 +153,7 @@ async function initStreaming() {
     console.log('Streaming started');
   } catch (error) {
     console.error('Error starting streaming:', error);
-    window.AndroidInterface.showToast?.('直播失败！', 'short');
+    AndroidUtil.showToast('直播失败！', 'short');
     pc.close();
   }
 }

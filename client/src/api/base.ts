@@ -13,10 +13,14 @@ const axiosInstance = axios.create({
 export const createRequest = <TRes>(path: string, args: AxiosRequestConfig) => {
   const config: AxiosRequestConfig<any> = {
     url: path,
+    timeout: 5000,
+    headers: {
+      'Content-Type': 'application/json',
+    },
     ...args,
   };
   if (!config.headers) config.headers = {};
-  config.headers['token'] = localStorage.getItem('token') ?? '';
-  config.headers['Authorization'] = localStorage.getItem('token') ?? '';
+  // config.headers['token'] = localStorage.getItem('token') ?? '';
+  // config.headers['Authorization'] = localStorage.getItem('token') ?? '';
   return axiosInstance.request<any, AxiosResponse<TRes>>(config);
 };

@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
 import { generateRandomString } from '@/utils/string';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
+import { AndroidUtil } from '@/utils/android.util';
+import { createRequest } from '@/api/base';
 
 definePage({
   name: '直播中',
@@ -88,9 +90,9 @@ async function handleFlipCamera() {
     await videoSender.replaceTrack(newStream.getVideoTracks()[0]);
     stream = newStream;
     refreshVideoPlayback();
-    window.AndroidInterface.showToast?.('已切换摄像头');
+    AndroidUtil.showToast('已切换摄像头');
   } else {
-    window.AndroidInterface.showToast?.('切换摄像头失败');
+    AndroidUtil.showToast('切换摄像头失败');
   }
 }
 
@@ -105,7 +107,7 @@ const router = useRouter();
 async function handleQuit() {
   await clearEffects();
   if (isAndroid()) {
-    window.AndroidInterface.quit?.();
+    window.AndroidInterface?.quit?.();
   } else {
     router.back();
   }
@@ -116,6 +118,7 @@ async function clearEffects() {
   // stopStreamEffect();
   pc.close();
   await stopVideo();
+  await requestStopLive();
 }
 
 // const ffmpeg = new FFmpeg();
@@ -158,7 +161,36 @@ let videoSender: RTCRtpSender;
 
 const liveState = ref(0);
 
+async function requestStartLive() {
+  try {
+    const response = await createRequest(`/live/${userStore.userInfo.id}`, {
+      method: 'POST',
+      data: {
+        live_url: `?forceRid=${roomId.value}`,
+        cover_url: userStore.userInfo.avatarUrl,
+        title: '直播间',
+        name: `${userStore.userInfo.name}的直播`,
+      },
+    });
+    liveState.value = 1;
+  } catch (e) {
+    /* empty */
+  }
+}
+
+async function requestStopLive() {
+  try {
+    const response = await createRequest(`/live/${userStore.userInfo.id}`, {
+      method: 'DELETE',
+    });
+    liveState.value = 0;
+  } catch (e) {
+    /* empty */
+  }
+}
+
 async function initStreaming() {
+  await requestStartLive();
   if (!stream) return;
   // 开始连接
   try {
@@ -201,13 +233,16 @@ async function initStreaming() {
 
     await pc.setRemoteDescription(answer);
     console.log('Streaming started');
-    window.AndroidInterface.showToast?.(`直播开始！${tempId}`, 'short');
+    AndroidUtil.showToast(`直播开始！${tempId}`, 'short');
+
+    // 通知服务器开始直播
+    await requestStartLive();
 
     currentCamera.value = cameras.value[0];
     currentMicrophone.value = microphones.value[0];
   } catch (error) {
     console.error('Error starting streaming:', error);
-    window.AndroidInterface.showToast?.('直播失败！', 'short');
+    AndroidUtil.showToast('直播失败！', 'short');
     pc.close();
   }
 }
@@ -248,11 +283,11 @@ onBeforeUnmount(async () => {
         <FlipCamera />
       </div>
       <div class="left-bottom" @click="handleGoLive">查看直播间</div>
-<!--      <div style="color: rgba(0 0 0 / 10%); z-index: -1">-->
-<!--        {{ cameras }}-->
-<!--        ///-->
-<!--        {{ currentCamera }}-->
-<!--      </div>-->
+      <!--      <div style="color: rgba(0 0 0 / 10%); z-index: -1">-->
+      <!--        {{ cameras }}-->
+      <!--        ///-->
+      <!--        {{ currentCamera }}-->
+      <!--      </div>-->
     </div>
   </div>
 </template>
