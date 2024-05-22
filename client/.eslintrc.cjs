@@ -19,6 +19,7 @@ module.exports = {
     semi: ['warn', 'always'],
     'vue/multi-word-component-names': 'off',
     'prettier/prettier': ['error'],
+    "linebreak-style": "off",
   },
   settings: {
     'import/core-modules': ['vue-router/auto', 'vue-router/auto-routes'],
