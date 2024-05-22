@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useDebounceFn, useDevicesList } from '@vueuse/core';
-import { isAndroid } from '@/utils/browser.util';
 import { FlipCamera, Power } from '@icon-park/vue-next';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
@@ -8,6 +7,9 @@ import { generateRandomString } from '@/utils/string';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
 import { AndroidUtil } from '@/utils/android.util';
 import { createRequest } from '@/api/base';
+import { DialogManager } from '@/components/cus-ui/dialog';
+import variables from '@/assets/variables.module.scss';
+import { getDurationString } from '@/utils/time.util';
 
 definePage({
   name: '直播中',
@@ -31,12 +33,15 @@ const currentMicrophone = ref<MediaDeviceInfo>();
 
 function refreshVideoPlayback() {
   const vid = document.getElementById('vid') as HTMLVideoElement;
+  const vid2 = document.getElementById('vid2') as HTMLVideoElement;
   console.log(vid);
   if (!vid) return;
   if (stream) {
     vid.srcObject = stream;
+    vid2.srcObject = stream;
   } else {
     vid.srcObject = null;
+    vid2.srcObject = null;
   }
 }
 
@@ -97,20 +102,37 @@ async function handleFlipCamera() {
 }
 
 function handleGoLive() {
-  // window.AndroidInterface.openLiveRoom?.(tempId);
-  router.push(`/audience?forceRid=${roomId.value}`);
+  const url = new URL(window.location.href);
+  url.pathname = '/audience';
+  url.searchParams.set('forceRid', roomId.value);
+  window.navigator.clipboard.writeText(url.href);
+  AndroidUtil.showToast('已复制直播间链接');
 }
 
 const debounceFlipCamera = useDebounceFn(() => handleFlipCamera(), 500);
 
 const router = useRouter();
-async function handleQuit() {
+
+async function handleStop() {
+  const res = await DialogManager.commonDialog({
+    title: '提示',
+    content: '确定要退出直播吗？',
+    confirmButtonProps: {
+      color: variables.colorPrimary,
+    },
+    showCancel: true,
+  });
+  if (!res) return;
+  // 计算 hh:mm:ss
+  const timeStr = getDurationString(startTime);
   await clearEffects();
-  if (isAndroid()) {
-    window.AndroidInterface?.quit?.();
-  } else {
-    router.back();
-  }
+  await router.push({
+    name: '直播结束',
+    query: {
+      title: `${userStore.userInfo.name}的直播`,
+      duration: timeStr,
+    },
+  });
 }
 
 // 关闭所有 effect
@@ -119,6 +141,7 @@ async function clearEffects() {
   pc.close();
   await stopVideo();
   await requestStopLive();
+  clearInterval(timer);
 }
 
 // const ffmpeg = new FFmpeg();
@@ -189,8 +212,12 @@ async function requestStopLive() {
   }
 }
 
+let startTime: Date;
+let timer: number = 0;
+const duration = ref('');
+
+
 async function initStreaming() {
-  await requestStartLive();
   if (!stream) return;
   // 开始连接
   try {
@@ -233,10 +260,15 @@ async function initStreaming() {
 
     await pc.setRemoteDescription(answer);
     console.log('Streaming started');
-    AndroidUtil.showToast(`直播开始！${tempId}`, 'short');
+    AndroidUtil.showToast(`直播开始！`, 'short');
 
     // 通知服务器开始直播
     await requestStartLive();
+
+    startTime = new Date();
+    timer = window.setInterval(() => {
+      duration.value = getDurationString(startTime);
+    });
 
     currentCamera.value = cameras.value[0];
     currentMicrophone.value = microphones.value[0];
@@ -248,7 +280,7 @@ async function initStreaming() {
 }
 
 useClientBackPressed(() => {
-  handleQuit();
+  handleStop();
 });
 
 onMounted(async () => {
@@ -271,12 +303,13 @@ onBeforeUnmount(async () => {
 <template>
   <div class="broadcast">
     <video class="video" controls autoplay muted id="vid" />
+    <video id="vid2" autoplay class="video2" controls muted/>
     <div class="layer">
       <div class="left-top">
         <div class="state"></div>
-        <span>直播中 {{ pcState.toUpperCase() }}</span>
+        <span>直播中 {{ duration }}</span>
       </div>
-      <div class="icon right-top" @click="handleQuit">
+      <div class="icon right-top" @click="handleStop">
         <Power />
       </div>
       <div class="icon right-bottom" @click="debounceFlipCamera">
@@ -300,9 +333,26 @@ onBeforeUnmount(async () => {
   overflow: hidden;
   position: relative;
   .video {
+    position: absolute;
     width: 100%;
     height: 100%;
-    background: $color-primary;
+    background: transparent;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .video2 {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 110vw;
+    height: 105vh;
+    object-fit: cover;
+    background: $color-grey-500;
+    z-index: -1;
+    filter: blur(10px) brightness(0.5);
+    overflow: hidden;
   }
   .layer {
     position: absolute;

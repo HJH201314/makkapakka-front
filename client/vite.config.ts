@@ -30,10 +30,24 @@ export default () => {
           },
           changeOrigin: true,
         },
-        '/api': {
+        '/api8088': {
           target: 'http://172.29.19.242:8088',
           rewrite(path) {
-            return path.replace(/^\/api/, '');
+            return path.replace(/^\/api8088/, '');
+          },
+          changeOrigin: true,
+        },
+        '/api10006': {
+          target: 'http://172.29.19.242:10006',
+          rewrite(path) {
+            return path.replace(/^\/api10006/, '');
+          },
+          changeOrigin: true,
+        },
+        '/api51601': {
+          target: 'http://172.29.19.242:51601',
+          rewrite(path) {
+            return path.replace(/^\/api51601/, '');
           },
           changeOrigin: true,
         },

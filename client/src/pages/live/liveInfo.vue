@@ -42,6 +42,11 @@ import { createRequest } from '@/api/base';
 import { useUserStore } from '@/stores/useUserStore';
 import { useRouter } from 'vue-router';
 
+definePage({
+  name: '开播啦',
+  path: '/broadcast/prepare',
+});
+
 const inputTitle = ref('');
 const fileInput = ref(null);
 const selectedImage = ref('');

@@ -5,6 +5,12 @@ import AdminLayout from '@/layouts/AdminLayout.vue';
 import { RouterView } from 'vue-router';
 
 const route = useRoute();
+
+if (import.meta.env.DEV) {
+  if (localStorage.getItem('APP_DEBUG') !== 'true') {
+    localStorage.setItem('APP_DEBUG', 'true');
+  }
+}
 </script>
 
 <template>

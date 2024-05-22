@@ -12,14 +12,14 @@
     <div class="footer">
       <span>直播已结束</span>
       <div class="button" @click="goBack">
-        <RollbackOutlined class="rollbcak-icon" />
+        <Return class="rollbcak-icon"/>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { RollbackOutlined } from '@ant-design/icons-vue';
+import { Return } from '@icon-park/vue-next';
 import { useUrlSearchParams } from '@vueuse/core';
 
 definePage({
@@ -94,7 +94,7 @@ function goBack() {
       border-radius: 50%;
 
       .rollbcak-icon {
-        font-size: 2.2rem;
+        font-size: 2.33rem;
         color: $color-black-lighter;
       }
     }

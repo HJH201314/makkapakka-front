@@ -1,7 +1,6 @@
 <!-- 基于Modal的基础对话框组件 -->
 <script setup lang="ts">
 import { ref } from 'vue';
-import CusHr from '@/components/cus-ui/hr/CusHr.vue';
 import CommonModal from '../modal/CommonModal.vue';
 import type { CommonModalFunc } from '../modal/CommonModal';
 import CusButton from '../button/CusButton.vue';
@@ -62,20 +61,21 @@ defineExpose<CommonDialogExpose>({
       <header>
         <div class="dialog-title">{{ title }}</div>
       </header>
-      <cus-hr />
       <main>
         <div v-html="props.content"></div>
         <slot></slot>
       </main>
-      <cus-hr />
       <footer>
         <cus-button
+          class="btn"
           text="取消"
-          type="normal"
+          tertiary
+          type="default"
           @click="handleCancel"
           v-bind="props.cancelButtonProps"
         />
         <cus-button
+          class="btn"
           text="确认"
           type="primary"
           @click="handleConfirm"
@@ -89,21 +89,28 @@ defineExpose<CommonDialogExpose>({
 <style scoped lang="scss">
 .dialog {
   width: 100%;
-  padding: 0.25rem 0.5rem 0.5rem 0.5rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 
   > header {
+    font-size: 1.5rem;
+    text-align: center;
   }
   > main {
-    padding: 0 0.5rem;
+    padding: 1rem 0.5rem;
+    font-size: 1.1rem;
   }
   > footer {
     width: 100%;
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
+
+    > .btn {
+      flex: 1;
+    }
   }
   &-title {
     font-weight: bold;

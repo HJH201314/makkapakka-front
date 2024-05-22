@@ -115,7 +115,8 @@ function handleClick() {
     <!-- 图标专用插槽 -->
     <slot name="icon"></slot>
     <!-- 按钮内容插槽 -->
-    <slot></slot>
+    <slot v-if="!text"></slot>
+    <span v-else>{{ text }}</span>
   </button>
 </template>
 
