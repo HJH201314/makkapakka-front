@@ -9,6 +9,8 @@ export const useUserStore = defineStore('user', () => {
     name: '未命名',
     avatarUrl: '/favicon.ico',
   });
+  const coverUrl = ref<string>('');
+  const title = ref<string>('');
 
   onMounted(() => {
     syncInfoTimer = window.setTimeout(() => {
@@ -35,5 +37,7 @@ export const useUserStore = defineStore('user', () => {
   return {
     token,
     userInfo,
+    coverUrl,
+    title,
   };
 });
