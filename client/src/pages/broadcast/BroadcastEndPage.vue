@@ -1,11 +1,11 @@
 <template>
   <div class="outer">
     <div class="header">
-      <span>{{ title }}</span>
+      <span>{{ params.title }}</span>
     </div>
     <div class="main">
       <div class="time">
-        <span>{{ duration }}</span>
+        <span>{{ params.duration }}</span>
       </div>
       <span>直播时长</span>
     </div>
@@ -20,12 +20,24 @@
 
 <script setup lang="ts">
 import { RollbackOutlined } from '@ant-design/icons-vue';
+import { useUrlSearchParams } from '@vueuse/core';
 
-const title = ref('种植园回忆录');
-const duration = ref('11:22:33');
-const goBack = () => {
-  console.log('go back');
-};
+definePage({
+  name: '直播结束',
+  path: '/broadcast/end',
+});
+
+const params = useUrlSearchParams('history', {
+  initialValue: {
+    title: '',
+    duration: '0',
+  },
+});
+
+// 返回上一页
+function goBack() {
+  window.AndroidInterface?.quit?.();
+}
 </script>
 
 <style scoped lang="scss">
