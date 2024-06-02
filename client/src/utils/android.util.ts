@@ -1,5 +1,6 @@
 import { isAndroid } from '@/utils/browser.util';
 import ToastManager from '@/components/cus-ui/toast/ToastManager';
+import variables from '@/assets/variables.module.scss';
 
 export class AndroidUtil {
   static isAndroid() {
@@ -10,7 +11,9 @@ export class AndroidUtil {
     if (window.AndroidInterface) {
       window.AndroidInterface.showToast?.(msg, length);
     } else {
-      ToastManager.info(msg);
+      ToastManager.info(msg, {
+        color: variables.colorPrimary,
+      });
     }
   }
 

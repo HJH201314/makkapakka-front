@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebounceFn, useDevicesList } from '@vueuse/core';
-import { FlipCamera, Microphone, Power } from '@icon-park/vue-next';
+import { Clipboard, FlipCamera, Power, Voice, VoiceOff } from '@icon-park/vue-next';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
 import { generateRandomString } from '@/utils/string';
@@ -106,7 +106,7 @@ async function handleFlipCamera() {
 function handleGoLive() {
   const url = new URL(window.location.href);
   url.pathname = '/audience';
-  url.searchParams.set('force_rid', roomId.value);
+  url.searchParams.set('rid', roomId.value);
   window.navigator.clipboard.writeText(url.href);
   AndroidUtil.showToast('已复制直播间链接');
 }
@@ -251,16 +251,14 @@ async function initStreaming() {
     currentMicrophone.value = microphones.value.find((v) => {
       return v.kind == 'audioinput' && v.label != '';
     });
-    pc.addTransceiver('audio', { direction: 'sendonly' });
-    pc.addTransceiver('video', { direction: 'sendonly' });
     s.getVideoTracks().forEach((track) => {
+      stream.addTrack(track);
       videoSender = pc.addTrack(track);
-      stream.addTrack(track);
-      refreshVideoPlayback();
     });
+    refreshVideoPlayback();
     s.getAudioTracks().forEach((track) => {
-      audioSender = pc.addTrack(track);
       stream.addTrack(track);
+      audioSender = pc.addTrack(track);
     });
 
     const offer = await pc.createOffer();
@@ -303,10 +301,14 @@ async function initStreaming() {
   }
 }
 
+const isVoiceOff = ref(false);
+
 function handleMute() {
   if (stream) {
     stream.getAudioTracks().forEach((track) => {
       track.enabled = !track.enabled;
+      isVoiceOff.value = !track.enabled;
+      AndroidUtil.showToast(track.enabled ? '已开启麦克风' : '已关闭麦克风');
     });
   }
 }
@@ -339,13 +341,20 @@ onBeforeUnmount(async () => {
       <div class="icon right-top" @click="handleStop">
         <Power />
       </div>
-      <div class="icon right-bottom-2" @click="handleMute">
-        <Microphone/>
+      <div
+        :class="{ 'icon-active': !isVoiceOff }"
+        class="icon right-bottom-2"
+        @click="handleMute"
+      >
+        <VoiceOff v-if="isVoiceOff"/>
+        <Voice v-else/>
       </div>
       <div class="icon right-bottom" @click="debounceFlipCamera">
         <FlipCamera />
       </div>
-      <div class="left-bottom" @click="handleGoLive">查看直播间</div>
+      <div class="icon left-bottom" @click="handleGoLive">
+        <Clipboard/>
+      </div>
       <div style="color: rgba(0 0 0 / 10%); z-index: -1">
         {{ microphones }}
         ///
@@ -357,11 +366,13 @@ onBeforeUnmount(async () => {
 
 <style scoped lang="scss">
 @import '@/assets/main';
+
 .broadcast {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   position: relative;
+
   .video {
     position: absolute;
     width: 100%;
@@ -384,6 +395,7 @@ onBeforeUnmount(async () => {
     filter: blur(10px) brightness(0.5);
     overflow: hidden;
   }
+
   .layer {
     position: absolute;
     z-index: 1;
@@ -393,6 +405,12 @@ onBeforeUnmount(async () => {
       span {
         color: #fff;
         font-size: w(28px);
+      }
+
+      &-active {
+        span {
+          color: $color-primary;
+        }
       }
     }
 
@@ -426,6 +444,7 @@ onBeforeUnmount(async () => {
       padding-left: w(20px);
       padding-right: w(20px);
       height: w(40px);
+      width: w(40px);
       border-radius: w(40px);
       background: rgb(0 0 0 / 20%);
       display: flex;
@@ -481,33 +500,41 @@ onBeforeUnmount(async () => {
 video::-webkit-media-controls-fullscreen-button {
   display: none;
 }
+
 /* 播放按钮 */
 video::-webkit-media-controls-play-button {
   display: none;
 }
+
 /* 进度条 */
 video::-webkit-media-controls-timeline {
   display: none;
 }
+
 /* 观看的当前时间 */
 video::-webkit-media-controls-current-time-display {
   display: none;
 }
+
 /* 剩余时间 */
 video::-webkit-media-controls-time-remaining-display {
   display: none;
 }
+
 /* 音量按钮 */
 video::-webkit-media-controls-mute-button {
   display: none;
 }
+
 video::-webkit-media-controls-toggle-closed-captions-button {
   display: none;
 }
+
 /* 音量的控制条 */
 video::-webkit-media-controls-volume-slider {
   display: none;
 }
+
 /* 所有控件 */
 video::-webkit-media-controls-enclosure {
   display: none;

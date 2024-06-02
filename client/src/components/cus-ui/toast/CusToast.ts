@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'vue';
+
 export interface CusToastProps {
   text?: string;
   position?:
@@ -11,4 +13,5 @@ export interface CusToastProps {
     | 'bottom-right';
   duration?: 'normal' | 'long' | 'short' | number;
   type?: 'normal' | 'success' | 'danger' | 'info' | 'warning';
+  color?: CSSProperties['color'];
 }

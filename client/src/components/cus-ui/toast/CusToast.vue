@@ -38,6 +38,7 @@ const toastClass = computed(() => {
 });
 
 const wrapperColor = computed(() => {
+  if (props.color) return props.color;
   switch (props.type) {
     case 'success':
       return variables.colorSuccess;

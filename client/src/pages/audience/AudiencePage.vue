@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Back, SendOne, SlyFaceWhitSmile } from '@icon-park/vue-next';
+import { Back, Play, SendOne, SlyFaceWhitSmile } from '@icon-park/vue-next';
 import { useUrlSearchParams } from '@vueuse/core';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -14,10 +14,12 @@ definePage({
   path: '/audience',
 });
 
+// query 参数
+// rid: 房间号, uid: 用户 id, 传 uid 会从直播列表里面搜索对应的 rid
 const params = useUrlSearchParams('history', {
   initialValue: {
-    rid: 'app',
-    force_rid: '',
+    rid: '',
+    uid: '',
   },
 });
 const realRoomId = ref('');
@@ -25,10 +27,9 @@ const whepUrl = computed(
   () => `/srs/rtc/v1/whep/?app=${realRoomId.value}&stream=livestream&eip=111.230.21.98:18000`
 );
 
-
 async function getAvailableStreams() {
-  if (params.force_rid) {
-    realRoomId.value = params.force_rid;
+  if (params.rid) {
+    realRoomId.value = params.rid;
     return;
   }
   const res = await fetch('/srs/api/v1/streams/');
@@ -36,7 +37,7 @@ async function getAvailableStreams() {
   const streams = data.streams;
   streams.reverse();
   for (const stream of streams) {
-    if (stream.app.startsWith(`room_${params.rid}`)) {
+    if (stream.app.startsWith(`room_${params.uid}`)) {
       console.log(stream.app);
       realRoomId.value = stream.app;
       break;
@@ -50,20 +51,24 @@ onMounted(async () => {
   await initStreaming();
 });
 
+const showPlayButton = ref(true);
 function refreshVideoPlayback() {
   const vid = document.getElementById('vid') as HTMLVideoElement;
   const vid2 = document.getElementById('vid2') as HTMLVideoElement;
   if (!vid) return;
-  // vid.onloadeddata = () => {
-  //   console.log('loadeddata');
-  //   console.log(vid.offsetHeight);
-  //   console.log(vid.videoHeight);
-  //   console.log(vid.offsetHeight / vid.videoHeight);
-  //   vid2.style.transform = `scale(${vid.offsetHeight / vid.videoHeight})`;
-  // };
-  console.log('stream:', stream);
+  console.log('video stream:', stream);
+  console.log('video stream tracks:', stream.getVideoTracks());
   vid.srcObject = stream;
   vid2.srcObject = stream;
+  try {
+    // 当用户没有交互时，无法自动开启视频
+    vid.play();
+    vid2.play();
+    showPlayButton.value = false;
+  } catch (e) {
+    console.error('play video error:', e);
+    showPlayButton.value = true;
+  }
 }
 
 async function stopVideo() {
@@ -73,6 +78,7 @@ async function stopVideo() {
 
 // 关闭所有 effect
 async function clearEffects() {
+  console.log('clear effects');
   pc && pc.close();
   await stopVideo();
 }
@@ -95,30 +101,54 @@ useClientBackPressed(() => {
 let stream: MediaStream = new MediaStream();
 // rtc 连接
 const pc = new RTCPeerConnection();
+pc.oniceconnectionstatechange = () => {
+  console.log('oniceconnectionstatechange', pc.iceConnectionState);
+};
+// @ts-ignore
+window.pc = pc; // 将 pc 放到 window 中方便调试
 // pc.ontrack = (event) => {
 //   stream.addTrack(event.track);
 //   refreshVideoPlayback();
 // };
 const pcState = ref(pc.connectionState);
+const stateText = computed(() => {
+  switch (pcState.value) {
+    case 'connecting':
+      return '连接中';
+    case 'connected':
+      return '直播中';
+    default:
+      return '';
+  }
+});
 // 监听 connectionstatechange 事件
-pc.onconnectionstatechange = () => {
+pc.onconnectionstatechange = async () => {
   // 获取当前连接状态
   const connectionState = pc.connectionState;
   pcState.value = connectionState;
+  (await pc.getStats()).forEach((report) => {
+    console.log('getStats', report);
+  });
 
   // 根据连接状态进行相应的处理
   switch (connectionState) {
     case 'new':
       console.log('连接状态：new');
       break;
+    case 'connecting':
+      console.log('连接状态：connecting');
+      break;
     case 'connected':
       console.log('连接状态：connected');
-      pc.getReceivers().forEach((receiver) => {
-        console.log('receiver:', receiver);
-        stream.addTrack(receiver.track);
-      });
-      console.log(stream.getTracks());
-      refreshVideoPlayback();
+      setTimeout(() => {
+        pc.getReceivers().forEach((receiver) => {
+          console.log('add receiver:', receiver);
+          stream.addTrack(receiver.track);
+        });
+        console.log('streamTracks', stream.getTracks());
+        console.log('pcReceivers', pc.getReceivers());
+        refreshVideoPlayback();
+      }, 0);
       break;
     case 'disconnected':
       console.log('连接状态：disconnected');
@@ -138,12 +168,11 @@ pc.onconnectionstatechange = () => {
 async function initStreaming() {
   // 开始连接
   try {
-    pc.addTransceiver('audio', { direction: 'recvonly' });
-    pc.addTransceiver('video', { direction: 'recvonly' });
-
+    // 创建 offer 用于描述本地流信息
     const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
     await pc.setLocalDescription(offer);
 
+    // 通过 HTTP 请求 WHEP 服务器获取 answer
     const response = await fetch(whepUrl.value, {
       method: 'POST',
       headers: {
@@ -156,6 +185,7 @@ async function initStreaming() {
       throw new Error('Failed to send offer to WHEP server');
     }
 
+    // 将 answer 设置为远端描述
     const answerSDP = await response.text();
     const answer = new RTCSessionDescription({
       type: 'answer',
@@ -183,12 +213,15 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="audience">
-    <video class="video" controls autoplay id="vid" />
-    <video id="vid2" autoplay class="video2" controls/>
+    <video id="vid" class="video" controls/>
+    <video id="vid2" class="video2" controls/>
     <div class="layer">
+      <div v-if="showPlayButton" class="icon center">
+        <Play @click="refreshVideoPlayback"/>
+      </div>
       <div class="right-top">
         <div class="state"></div>
-        <span>观看中</span>
+        <span>{{ stateText }}</span>
       </div>
       <div class="icon left-top" @click="handleQuit">
         <Back />
@@ -244,6 +277,27 @@ onBeforeUnmount(() => {
         color: #fff;
         font-size: w(28px);
       }
+
+      &-active {
+        span {
+          color: $color-primary;
+        }
+      }
+    }
+
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: w(40px);
+      width: w(40px);
+      border-radius: w(40px);
+      background: rgb(0 0 0 / 20%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: w(10px);
     }
 
     .right-top {
