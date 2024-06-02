@@ -51,6 +51,25 @@ onMounted(async () => {
   await initStreaming();
 });
 
+const showScreenShot = ref(false);
+
+function taskScreenshot() {
+  const vid = document.getElementById('vid') as HTMLVideoElement;
+  const canvas1 = document.getElementById('canvas1') as HTMLCanvasElement;
+  const canvas2 = document.getElementById('canvas2') as HTMLCanvasElement;
+  const ctx = canvas1.getContext('2d');
+  const ctx2 = canvas2.getContext('2d');
+  if (!ctx || !ctx2) return;
+  canvas1.width = vid.videoWidth;
+  canvas1.height = vid.videoHeight;
+  canvas2.width = vid.videoWidth;
+  canvas2.height = vid.videoHeight;
+  canvas1.style.height = `${vid.offsetHeight}px`;
+  ctx.drawImage(vid, 0, 0, canvas1.width, canvas1.height);
+  ctx2.drawImage(vid, 0, 0, canvas2.width, canvas2.height);
+  showScreenShot.value = true;
+}
+
 const showPlayButton = ref(true);
 
 async function refreshVideoPlayback() {
@@ -61,20 +80,51 @@ async function refreshVideoPlayback() {
   console.log('video stream tracks:', stream.getVideoTracks());
   vid.srcObject = stream;
   vid2.srcObject = stream;
-  try {
-    // 当用户没有交互时，无法自动开启视频
-    await vid.play();
-    await vid2.play();
-    showPlayButton.value = false;
-  } catch (e) {
-    console.error('播放视频失败:', e);
+  if (stream.getVideoTracks().every((v) => v.enabled)) {
+    try {
+      // 当用户没有交互时，无法自动开启视频
+      await vid.play();
+      await vid2.play();
+      showPlayButton.value = false;
+    } catch (e) {
+      console.error('播放视频失败:', e);
+      showPlayButton.value = true;
+    }
+  } else {
+    vid.pause();
+    vid2.pause();
     showPlayButton.value = true;
+  }
+  // 更新播放暂停浮层位置
+  const stopAndPlay = document.getElementById('stop-and-play');
+  if (stopAndPlay) {
+    stopAndPlay.style.height = `${(vid.videoHeight * vid.clientWidth) / vid.videoWidth}px`;
   }
 }
 
 async function stopVideo() {
-  stream.getVideoTracks().forEach((v) => v.stop());
-  refreshVideoPlayback();
+  stream.getTracks().forEach((v) => v.stop());
+  await refreshVideoPlayback();
+}
+
+async function pauseVideo() {
+  stream.getTracks().forEach((v) => (v.enabled = false));
+  await refreshVideoPlayback();
+}
+
+function handleTogglePlay() {
+  if (!showPlayButton.value && stream.getVideoTracks().every((v) => v.enabled)) {
+    // 暂停视频
+    taskScreenshot();
+    pauseVideo();
+    showPlayButton.value = true;
+  } else {
+    // 播放视频
+    stream.getVideoTracks().forEach((v) => (v.enabled = true));
+    refreshVideoPlayback();
+    showPlayButton.value = false;
+    showScreenShot.value = false;
+  }
 }
 
 // 关闭所有 effect
@@ -215,11 +265,16 @@ onBeforeUnmount(() => {
 <template>
   <div class="audience">
     <video id="vid" class="video" controls/>
+    <canvas v-show="showScreenShot" id="canvas1" class="video"/>
     <video id="vid2" class="video2" controls/>
+    <canvas v-show="showScreenShot" id="canvas2" class="video2"/>
+    <div id="stop-and-play" @click="handleTogglePlay">
+      <!-- 叠在视频上方用于切换播放状态 -->
+    </div>
+    <div v-if="showPlayButton" class="play">
+      <Play @click="handleTogglePlay"/>
+    </div>
     <div class="layer">
-      <div v-if="showPlayButton" class="icon center">
-        <Play @click="refreshVideoPlayback"/>
-      </div>
       <div class="right-top">
         <div class="state"></div>
         <span>{{ stateText }}</span>
@@ -249,10 +304,11 @@ onBeforeUnmount(() => {
   position: relative;
   .video {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    width: w(375px);
+    top: 50%;
+    transform: translateY(-50%);
     background: transparent;
-    z-index: 0;
+    z-index: 10;
   }
 
   .video2 {
@@ -268,9 +324,30 @@ onBeforeUnmount(() => {
     filter: blur(10px) brightness(0.5);
     overflow: hidden;
   }
+
+  .play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: w(40px);
+    width: w(40px);
+    border-radius: w(40px);
+    background: rgb(0 0 0 / 20%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 11;
+
+    span {
+      color: #fff;
+      font-size: w(28px);
+    }
+  }
+
   .layer {
     position: absolute;
-    z-index: 1;
+    z-index: 9;
     inset: 0;
 
     .icon {
@@ -397,6 +474,16 @@ onBeforeUnmount(() => {
       align-items: center;
     }
   }
+}
+
+#stop-and-play {
+  position: fixed;
+  left: 0;
+  min-height: w(281.25px);
+  width: w(375px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 11;
 }
 
 // ========== 隐藏 video 控件 ==========
