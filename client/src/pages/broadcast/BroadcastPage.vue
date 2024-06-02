@@ -115,40 +115,95 @@ const debounceFlipCamera = useDebounceFn(() => handleFlipCamera(), 500);
 
 const router = useRouter();
 
-async function handleStop() {
-  const res = await DialogManager.commonDialog({
-    title: '提示',
-    content: '确定要退出直播吗？',
-    confirmButtonProps: {
-      color: variables.colorPrimary,
-    },
-    showCancel: true,
-  });
-  if (!res) return;
+async function handleStop(force: boolean = false) {
+  if (!force) {
+    const res = await DialogManager.commonDialog({
+      title: '提示',
+      content: '确定要退出直播吗？',
+      confirmButtonProps: {
+        color: variables.colorPrimary,
+      },
+      showCancel: true,
+    });
+    if (!res) return;
+  }
   // 计算 hh:mm:ss
   const timeStr = getDurationString(startTime);
   await clearEffects();
-  await router.push({
+  await router.replace({
     name: '直播结束',
     query: {
       title: `${userStore.userInfo.name}的直播`,
       duration: timeStr,
+      subtitle: tolerance <= 0 ? '违规自动终止' : '直播已结束',
     },
   });
 }
 
+let tolerance = 2;
+function reportImage(blob: Blob) {
+  // 上报到图像识别
+  const formData = new FormData();
+  formData.append('file', new File([blob], `${roomId.value}.jpg`));
+  fetch('/det/det', {
+    method: 'POST',
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((res: any[]) => {
+      // 有识别结果，发出警告
+      if (res.length > 0) {
+        if (tolerance <= 0) {
+          clearEffects(); // 直接中断直播信号
+          DialogManager.commonDialog({
+            title: '警告',
+            content: `警告次数超出限制，请立即停止直播！`,
+            confirmButtonProps: {
+              color: variables.colorDanger,
+              text: '好吧',
+            },
+            showCancel: false,
+          }).then(() => {
+            AndroidUtil.showToast('触犯天条，直播终止！', 'long');
+            handleStop(true);
+          });
+        } else {
+          DialogManager.commonDialog({
+            title: '警告',
+            content: `检测到违规内容，${tolerance} 次警告后终止直播！`,
+            confirmButtonProps: {
+              color: variables.colorDanger,
+              text: '知道了',
+            },
+            showCancel: false,
+          });
+          AndroidUtil.showToast(`检测到违规内容！${tolerance} 次警告后终止直播！`, 'long');
+        }
+        tolerance -= 1;
+      }
+    })
+    .catch((e) => {
+      console.error('Error in reportImage:', e);
+    });
+}
+
 function handleRtcConnected() {
   reporter = window.setInterval(() => {
-    console.log('report');
+    console.debug('report');
     const canvas = document.createElement('canvas');
     const player = document.getElementById('vid') as HTMLVideoElement;
     canvas.width = player.videoWidth;
     canvas.height = player.videoHeight;
     canvas.getContext('2d')?.drawImage(document.getElementById('vid') as HTMLVideoElement, 0, 0);
-    const data = canvas.toDataURL('image/jpeg', 0.5);
-    new FormData().append('image', data);
-    console.log(data);
-  }, 10000);
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        reportImage(blob); // 调用图像识别
+      },
+      'image/jpeg',
+      0.5
+    );
+  }, 20000);
 }
 
 // 关闭所有 effect
@@ -208,7 +263,7 @@ async function requestStartLive() {
     const response = await createRequest(`/live/${userStore.userInfo.id}`, {
       method: 'POST',
       data: {
-        live_url: `?force_rid=${roomId.value}`,
+        live_url: `?rid=${roomId.value}`,
         cover_url: userStore.userInfo.avatarUrl,
         title: '直播间',
         name: `${userStore.userInfo.name}的直播`,
@@ -332,28 +387,24 @@ onBeforeUnmount(async () => {
 <template>
   <div class="broadcast">
     <video class="video" controls autoplay muted id="vid" />
-    <video id="vid2" autoplay class="video2" controls muted/>
+    <video id="vid2" autoplay class="video2" controls muted />
     <div class="layer">
       <div class="left-top">
         <div class="state"></div>
         <span>直播中 {{ duration }}</span>
       </div>
-      <div class="icon right-top" @click="handleStop">
+      <div class="icon right-top" @click="() => handleStop()">
         <Power />
       </div>
-      <div
-        :class="{ 'icon-active': !isVoiceOff }"
-        class="icon right-bottom-2"
-        @click="handleMute"
-      >
-        <VoiceOff v-if="isVoiceOff"/>
-        <Voice v-else/>
+      <div :class="{ 'icon-active': !isVoiceOff }" class="icon right-bottom-2" @click="handleMute">
+        <VoiceOff v-if="isVoiceOff" />
+        <Voice v-else />
       </div>
       <div class="icon right-bottom" @click="debounceFlipCamera">
         <FlipCamera />
       </div>
       <div class="icon left-bottom" @click="handleGoLive">
-        <Clipboard/>
+        <Clipboard />
       </div>
       <div style="color: rgba(0 0 0 / 10%); z-index: -1">
         {{ microphones }}

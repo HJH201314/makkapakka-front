@@ -2,7 +2,7 @@ import type { CSSProperties } from 'vue';
 
 export interface CusButtonProps {
   /**
-   * @deprecated 请停止使用，该属性已失效
+   * 按钮文字，设置后 slot 不生效
    */
   text?: string;
   /**

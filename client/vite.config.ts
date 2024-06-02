@@ -31,6 +31,13 @@ export default () => {
           },
           changeOrigin: true,
         },
+        '/det': {
+          target: 'http://172.29.17.107:5000',
+          rewrite(path) {
+            return path.replace(/^\/det/, '');
+          },
+          changeOrigin: true,
+        },
         '/api8088': {
           target: 'http://172.29.19.242:8088',
           rewrite(path) {

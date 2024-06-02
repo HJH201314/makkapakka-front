@@ -10,7 +10,7 @@
       <span>直播时长</span>
     </div>
     <div class="footer">
-      <span>直播已结束</span>
+      <span>{{ params.subtitle }}</span>
       <div class="button" @click="goBack">
         <Return class="rollbcak-icon"/>
       </div>
@@ -32,6 +32,7 @@ const params = useUrlSearchParams('history', {
   initialValue: {
     title: '',
     duration: '0',
+    subtitle: '直播已结束',
   },
 });
 
