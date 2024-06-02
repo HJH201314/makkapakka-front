@@ -156,7 +156,7 @@ async function clearEffects() {
   // stopStreamEffect();
   pc.close();
   await stopVideo();
-  await requestStopLive();
+  requestStopLive().then();
   clearInterval(timer);
   clearInterval(reporter);
 }
@@ -288,7 +288,7 @@ async function initStreaming() {
     AndroidUtil.showToast(`直播开始！`, 'short');
 
     // 通知服务器开始直播
-    await requestStartLive();
+    requestStartLive().then();
 
     startTime = new Date();
     timer = window.setInterval(() => {

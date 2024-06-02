@@ -46,24 +46,29 @@ function goBack() {
 
 .outer {
   width: w(375px);
-  height: 100vh;
+  height: 100dvh;
   background-color: $color-black-lighter;
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   .header {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 1.5rem;
-    padding-top: 12rem;
+    //padding-top: 12rem;
   }
 
   .main {
-    padding-top: 7rem;
+    margin-top: 4rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
 
     .time {
       display: flex;
@@ -78,7 +83,7 @@ function goBack() {
   }
 
   .footer {
-    padding-top: 12rem;
+    margin-top: 8rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
