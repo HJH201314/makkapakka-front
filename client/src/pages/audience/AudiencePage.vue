@@ -52,7 +52,8 @@ onMounted(async () => {
 });
 
 const showPlayButton = ref(true);
-function refreshVideoPlayback() {
+
+async function refreshVideoPlayback() {
   const vid = document.getElementById('vid') as HTMLVideoElement;
   const vid2 = document.getElementById('vid2') as HTMLVideoElement;
   if (!vid) return;
@@ -62,11 +63,11 @@ function refreshVideoPlayback() {
   vid2.srcObject = stream;
   try {
     // 当用户没有交互时，无法自动开启视频
-    vid.play();
-    vid2.play();
+    await vid.play();
+    await vid2.play();
     showPlayButton.value = false;
   } catch (e) {
-    console.error('play video error:', e);
+    console.error('播放视频失败:', e);
     showPlayButton.value = true;
   }
 }

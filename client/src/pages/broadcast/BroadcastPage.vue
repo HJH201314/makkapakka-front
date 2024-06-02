@@ -59,7 +59,7 @@ async function stopVideo() {
 async function handleFlipCamera() {
   let newCamera: MediaDeviceInfo | undefined = undefined;
   if (currentCamera.value?.label.includes('front')) {
-    // 改用后置镜头
+    // 若当前为前置摄像头，尝试寻找后置镜头
     newCamera = cameras.value.find((v) => {
       console.log(v.deviceId, v.kind, v.label);
       return v.label.includes('back');
@@ -68,7 +68,7 @@ async function handleFlipCamera() {
       currentCamera.value = newCamera;
     }
   } else if (currentCamera.value?.label.includes('back')) {
-    // 改用后置镜头
+    // 若当前为后置摄像头，尝试寻找前置镜头
     newCamera = cameras.value.find((v) => {
       return v.label.includes('front');
     });
@@ -76,7 +76,7 @@ async function handleFlipCamera() {
       currentCamera.value = newCamera;
     }
   } else {
-    // 未知情况，往后切一一个摄像头
+    // 未知情况，随便切一一个摄像头
     newCamera = cameras.value.find((v) => {
       return v.kind === 'videoinput' && v.deviceId != currentCamera.value?.deviceId;
     });
@@ -99,7 +99,7 @@ async function handleFlipCamera() {
     refreshVideoPlayback();
     AndroidUtil.showToast('已切换摄像头');
   } else {
-    AndroidUtil.showToast('切换摄像头失败');
+    AndroidUtil.showToast('没有能切换的摄像头');
   }
 }
 
