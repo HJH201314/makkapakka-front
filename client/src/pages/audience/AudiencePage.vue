@@ -7,6 +7,8 @@ import { isAndroid } from '@/utils/browser.util';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
 import { AndroidUtil } from '@/utils/android.util';
 
+import adapter from 'webrtc-adapter';
+
 definePage({
   name: '观众',
   path: '/audience',
@@ -15,7 +17,7 @@ definePage({
 const params = useUrlSearchParams('history', {
   initialValue: {
     rid: 'app',
-    forceRid: '',
+    force_rid: '',
   },
 });
 const realRoomId = ref('');
@@ -23,9 +25,10 @@ const whepUrl = computed(
   () => `/srs/rtc/v1/whep/?app=${realRoomId.value}&stream=livestream&eip=111.230.21.98:18000`
 );
 
+
 async function getAvailableStreams() {
-  if (params.forceRid) {
-    realRoomId.value = params.forceRid;
+  if (params.force_rid) {
+    realRoomId.value = params.force_rid;
     return;
   }
   const res = await fetch('/srs/api/v1/streams/');
@@ -42,20 +45,9 @@ async function getAvailableStreams() {
 }
 
 onMounted(async () => {
+  console.log('adapter', adapter.browserDetails.browser, adapter.browserDetails.version);
   await getAvailableStreams();
   await initStreaming();
-
-  const viewport = window.visualViewport;
-
-  viewport.addEventListener('resize', () => {
-    let keyboardHeight = viewport.height - viewport.visualViewport.height;
-
-    if (keyboardHeight > 0) {
-      console.log('Keyboard height:', keyboardHeight);
-    } else {
-      console.log('Keyboard hidden');
-    }
-  });
 });
 
 function refreshVideoPlayback() {
@@ -196,7 +188,7 @@ onBeforeUnmount(() => {
     <div class="layer">
       <div class="right-top">
         <div class="state"></div>
-        <span>观看 {{ pcState.toUpperCase() }}</span>
+        <span>观看中</span>
       </div>
       <div class="icon left-top" @click="handleQuit">
         <Back />

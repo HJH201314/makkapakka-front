@@ -38,9 +38,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { createRequest } from '@/api/base';
+import { createRequest10006 } from '@/api/base';
 import { useUserStore } from '@/stores/useUserStore';
 import { useRouter } from 'vue-router';
+import { AndroidUtil } from '@/utils/android.util';
+import { useClientBackPressed } from '@/commands/useClientBackPressed';
 
 definePage({
   name: '开播啦',
@@ -55,8 +57,13 @@ const userStore = useUserStore();
 const router = useRouter();
 
 function backPage() {
-  router.back();
+  AndroidUtil.backOrQuit();
 }
+
+useClientBackPressed(() => {
+  backPage();
+});
+
 const handleFileClick = () => {
   fileInput.value.click();
 };
@@ -74,11 +81,12 @@ const handleFileChange = (e: Event) => {
 };
 
 async function handleSubmit() {
+  let coverUrl = '';
   try {
     const formData = new FormData();
     formData.append('file', fileInput.value.files?.[0]);
     //upload cover
-    const coveres = await createRequest('/upload/cover', {
+    const coveres = await createRequest10006('/upload/cover', {
       method: 'POST',
       data: formData,
       headers: {
@@ -86,13 +94,13 @@ async function handleSubmit() {
       },
     });
     //wait for use
-    const coverUrl = coveres.data.cover_url;
+    coverUrl = coveres.data.cover_url;
     userStore.coverUrl = coverUrl;
     userStore.title = inputTitle.value;
-    await router.replace('/broadcast/BroadcastPage?coverUrl=' + coverUrl);
   } catch (e) {
     console.error(e);
   }
+  await router.replace('/broadcast?coverUrl=' + coverUrl);
 }
 </script>
 

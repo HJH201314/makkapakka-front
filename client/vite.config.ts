@@ -12,6 +12,7 @@ import Components from 'unplugin-vue-components/vite';
 import { VueRouterAutoImports } from 'unplugin-vue-router';
 import sassDts from 'vite-plugin-sass-dts';
 import path from 'path';
+import legacy from '@vitejs/plugin-legacy';
 
 // https://vitejs.dev/config/
 export default () => {
@@ -54,6 +55,9 @@ export default () => {
       },
     },
     plugins: [
+      legacy({
+        targets: ['defaults', 'not IE 11'],
+      }),
       VueRouter({
         routesFolder: [
           {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebounceFn, useDevicesList } from '@vueuse/core';
-import { FlipCamera, Power } from '@icon-park/vue-next';
+import { FlipCamera, Microphone, Power } from '@icon-park/vue-next';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
 import { generateRandomString } from '@/utils/string';
@@ -10,6 +10,8 @@ import { createRequest } from '@/api/base';
 import { DialogManager } from '@/components/cus-ui/dialog';
 import variables from '@/assets/variables.module.scss';
 import { getDurationString } from '@/utils/time.util';
+
+import adapter from 'webrtc-adapter';
 
 definePage({
   name: '直播中',
@@ -104,7 +106,7 @@ async function handleFlipCamera() {
 function handleGoLive() {
   const url = new URL(window.location.href);
   url.pathname = '/audience';
-  url.searchParams.set('forceRid', roomId.value);
+  url.searchParams.set('force_rid', roomId.value);
   window.navigator.clipboard.writeText(url.href);
   AndroidUtil.showToast('已复制直播间链接');
 }
@@ -135,6 +137,20 @@ async function handleStop() {
   });
 }
 
+function handleRtcConnected() {
+  reporter = window.setInterval(() => {
+    console.log('report');
+    const canvas = document.createElement('canvas');
+    const player = document.getElementById('vid') as HTMLVideoElement;
+    canvas.width = player.videoWidth;
+    canvas.height = player.videoHeight;
+    canvas.getContext('2d')?.drawImage(document.getElementById('vid') as HTMLVideoElement, 0, 0);
+    const data = canvas.toDataURL('image/jpeg', 0.5);
+    new FormData().append('image', data);
+    console.log(data);
+  }, 10000);
+}
+
 // 关闭所有 effect
 async function clearEffects() {
   // stopStreamEffect();
@@ -142,6 +158,7 @@ async function clearEffects() {
   await stopVideo();
   await requestStopLive();
   clearInterval(timer);
+  clearInterval(reporter);
 }
 
 // const ffmpeg = new FFmpeg();
@@ -165,6 +182,7 @@ pc.onconnectionstatechange = () => {
       break;
     case 'connected':
       console.log('连接状态：connected');
+      handleRtcConnected();
       break;
     case 'disconnected':
       console.log('连接状态：disconnected');
@@ -181,6 +199,7 @@ pc.onconnectionstatechange = () => {
   }
 };
 let videoSender: RTCRtpSender;
+let audioSender: RTCRtpSender;
 
 const liveState = ref(0);
 
@@ -189,7 +208,7 @@ async function requestStartLive() {
     const response = await createRequest(`/live/${userStore.userInfo.id}`, {
       method: 'POST',
       data: {
-        live_url: `?forceRid=${roomId.value}`,
+        live_url: `?force_rid=${roomId.value}`,
         cover_url: userStore.userInfo.avatarUrl,
         title: '直播间',
         name: `${userStore.userInfo.name}的直播`,
@@ -215,7 +234,8 @@ async function requestStopLive() {
 let startTime: Date;
 let timer: number = 0;
 const duration = ref('');
-
+// 定时上报
+let reporter: number = 0;
 
 async function initStreaming() {
   if (!stream) return;
@@ -225,6 +245,12 @@ async function initStreaming() {
       audio: true,
       video: true,
     });
+    // 使用第一个摄像头作为默认摄像头
+    currentCamera.value = cameras.value[0];
+    // 寻找标记为音频输入的设备作为默认麦克风
+    currentMicrophone.value = microphones.value.find((v) => {
+      return v.kind == 'audioinput' && v.label != '';
+    });
     pc.addTransceiver('audio', { direction: 'sendonly' });
     pc.addTransceiver('video', { direction: 'sendonly' });
     s.getVideoTracks().forEach((track) => {
@@ -233,6 +259,7 @@ async function initStreaming() {
       refreshVideoPlayback();
     });
     s.getAudioTracks().forEach((track) => {
+      audioSender = pc.addTrack(track);
       stream.addTrack(track);
     });
 
@@ -269,13 +296,18 @@ async function initStreaming() {
     timer = window.setInterval(() => {
       duration.value = getDurationString(startTime);
     });
-
-    currentCamera.value = cameras.value[0];
-    currentMicrophone.value = microphones.value[0];
   } catch (error) {
     console.error('Error starting streaming:', error);
     AndroidUtil.showToast('直播失败！', 'short');
     pc.close();
+  }
+}
+
+function handleMute() {
+  if (stream) {
+    stream.getAudioTracks().forEach((track) => {
+      track.enabled = !track.enabled;
+    });
   }
 }
 
@@ -284,13 +316,8 @@ useClientBackPressed(() => {
 });
 
 onMounted(async () => {
+  console.log('adapter', adapter.browserDetails.browser, adapter.browserDetails.version);
   // 初始化视频和音频输入
-  if (!cameras.value.length) {
-    // 无视频源
-  }
-  if (!microphones.value.length) {
-    // 无音频源
-  }
   await startVideo();
   await initStreaming();
 });
@@ -312,15 +339,18 @@ onBeforeUnmount(async () => {
       <div class="icon right-top" @click="handleStop">
         <Power />
       </div>
+      <div class="icon right-bottom-2" @click="handleMute">
+        <Microphone/>
+      </div>
       <div class="icon right-bottom" @click="debounceFlipCamera">
         <FlipCamera />
       </div>
       <div class="left-bottom" @click="handleGoLive">查看直播间</div>
-      <!--      <div style="color: rgba(0 0 0 / 10%); z-index: -1">-->
-      <!--        {{ cameras }}-->
-      <!--        ///-->
-      <!--        {{ currentCamera }}-->
-      <!--      </div>-->
+      <div style="color: rgba(0 0 0 / 10%); z-index: -1">
+        {{ microphones }}
+        ///
+        {{ currentMicrophone }}
+      </div>
     </div>
   </div>
 </template>
@@ -422,6 +452,19 @@ onBeforeUnmount(async () => {
       position: absolute;
       bottom: 1rem;
       right: 1rem;
+      width: w(40px);
+      height: w(40px);
+      border-radius: w(40px);
+      background: rgb(0 0 0 / 20%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .right-bottom-2 {
+      position: absolute;
+      bottom: 1rem;
+      right: w(56px);
       width: w(40px);
       height: w(40px);
       border-radius: w(40px);

@@ -21,6 +21,7 @@
 <script setup lang="ts">
 import { Return } from '@icon-park/vue-next';
 import { useUrlSearchParams } from '@vueuse/core';
+import { AndroidUtil } from '@/utils/android.util';
 
 definePage({
   name: '直播结束',
@@ -36,7 +37,7 @@ const params = useUrlSearchParams('history', {
 
 // 返回上一页
 function goBack() {
-  window.AndroidInterface?.quit?.();
+  AndroidUtil.quit();
 }
 </script>
 

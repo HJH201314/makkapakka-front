@@ -18,8 +18,8 @@ module.exports = {
   rules: {
     semi: ['warn', 'always'],
     'vue/multi-word-component-names': 'off',
-    'prettier/prettier': ['error'],
     "linebreak-style": "off",
+    'prettier/prettier': ['warn', {endOfLine: 'auto'}],
   },
   settings: {
     'import/core-modules': ['vue-router/auto', 'vue-router/auto-routes'],
