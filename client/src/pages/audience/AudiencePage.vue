@@ -298,8 +298,8 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 @import '@/assets/main.scss';
 .audience {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
   position: relative;
   .video {
@@ -347,7 +347,7 @@ onBeforeUnmount(() => {
 
   .layer {
     position: absolute;
-    z-index: 9;
+    z-index: 12;
     inset: 0;
 
     .icon {
@@ -483,7 +483,7 @@ onBeforeUnmount(() => {
   width: w(375px);
   top: 50%;
   transform: translateY(-50%);
-  z-index: 11;
+  z-index: 13;
 }
 
 // ========== 隐藏 video 控件 ==========

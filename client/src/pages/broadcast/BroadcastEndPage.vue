@@ -47,7 +47,7 @@ function goBack() {
 
 .outer {
   width: w(375px);
-  height: 100dvh;
+  height: 100vh;
   background-color: $color-black-lighter;
   color: white;
   display: flex;
