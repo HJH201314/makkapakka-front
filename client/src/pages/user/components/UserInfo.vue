@@ -44,8 +44,8 @@
 import { ref } from 'vue';
 import colors from '@/assets/variables.module.scss';
 import { Avatar as AAvatar } from 'ant-design-vue';
-import PostAppointment from '@/pages/live/components/postAppointment.vue';
-import { confirm_layer } from '@/pages/live/components/confirm_layer';
+import PostAppointment from '@/pages/user/components/postAppointment.vue';
+import { confirm_layer } from '@/commands/confirm_layer';
 
 const props = defineProps<{
   // 是否是自己

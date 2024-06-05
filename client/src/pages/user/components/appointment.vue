@@ -4,7 +4,6 @@
       <div class="left">
         <div class="title">直播预约：{{ title }}</div>
         <div class="time">{{ dateString }} 进行直播</div>
-        <!--        <div class="num">{{ num }} 人预约</div>-->
       </div>
       <div class="right">
         <button
@@ -34,26 +33,22 @@
 import { defineProps, ref } from 'vue';
 import colors from '@/assets/variables.module.scss';
 import { Button, notification } from 'ant-design-vue';
-import { confirm_layer } from '@/pages/live/components/confirm_layer';
+import { confirm_layer } from '@/commands/confirm_layer';
 
 const props = defineProps<{
   isMyself: boolean;
   title: String;
   date: Date;
-  num: Number;
   appointed: boolean;
 }>();
-let num = ref(props.num ? props.num : 0);
 let date = ref(new Date(props.date || new Date()));
 let appointed = ref(props.appointed);
 let buttonWords = ref(appointed.value ? '已预约' : '预约');
 let buttonColor = computed(() => (appointed.value ? colors.colorSecondary : colors.colorPrimary));
 
 /* 预约直播 - 用户 */
-// todo
 const onAppoint = () => {
   if (appointed.value) {
-    num.value = +num.value - 1;
     const key = 'appoint';
     const div = confirm_layer();
     notification.open({
@@ -90,7 +85,6 @@ const onAppoint = () => {
   } else {
     appointed.value = !appointed.value;
     buttonWords.value = '已预约';
-    num.value = +num.value + 1;
     console.log('预约成功');
     // todo 预约成功
     window.AndroidInterface.subscribeNextBroadcast?.(Date.now(), 'aaa');

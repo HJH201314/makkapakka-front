@@ -4,14 +4,14 @@ import LiveCard from '@/pages/live/components/LiveCard.vue';
 import { LeftOutlined } from '@ant-design/icons-vue';
 import { useUserStore } from '@/stores/useUserStore';
 import { useIntersectionObserver } from '@vueuse/core';
-import Appointment from '@/pages/live/components/appointment.vue';
+import Appointment from '@/pages/user/components/appointment.vue';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
 
 definePage({
   path: '/user/home',
   name: '用户 - 直播页',
 });
-
+// todo：修改用户信息后，user/home没有对应变化；直播间相机转换；
 // 观测页面顶部是否移出
 const realPageTopRef = ref();
 useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {

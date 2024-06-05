@@ -29,5 +29,6 @@ declare module 'vue-router/auto-routes' {
     '/test/test': RouteRecordInfo<'/test/test', '/test/test', Record<never, never>, Record<never, never>>,
     '/test/video': RouteRecordInfo<'/test/video', '/test/video', Record<never, never>, Record<never, never>>,
     '用户 - 直播页': RouteRecordInfo<'用户 - 直播页', '/user/home', Record<never, never>, Record<never, never>>,
+    '用户 - 测试页': RouteRecordInfo<'用户 - 测试页', '/user/test', Record<never, never>, Record<never, never>>,
   }
 }

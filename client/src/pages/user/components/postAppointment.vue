@@ -10,7 +10,7 @@
         </div>
         <div class="right">
           <!--          todo 日期、时间选择器-->
-          <input type="datetime-local" v-model="time" />
+          <div class="time" @click="openPicker"></div>
         </div>
       </div>
       <div class="title">
@@ -23,23 +23,63 @@
       </div>
     </div>
     <div class="footer">
-      <button class="button" @click="sendPost">发布预约</button>
+      <button class="button" @click="sendPost" :disabled="!time || !title">发布预约</button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { createRequest } from '@/api/base';
+import { useUserStore } from '@/stores/useUserStore';
 
+const props = defineProps<{
+  appointed: boolean;
+}>();
+
+const userInfo = useUserStore().userInfo;
 const rid = ref(''); // 直播间id
-const uid = ref(''); // 用户id
+const uid = userInfo.id; // 用户id
 const time = ref(''); // 预约时间 "2023-5-10 10:10"
 const title = ref(''); // 预约标题
 
-// 发布预约
-const sendPost = () => {
+// 发送预约请求
+const sendPost = async () => {
+  if (props.appointed) {
+    window.AndroidInterface?.showToast?.('已超过预约上线');
+    return;
+  }
   console.log(title.value);
+  // 设置时间格式
+  time.value = time.value.replace('T', ' ');
+  time.value = time.value.replace('-', ' ');
+  console.log(time.value);
+
+  // todo 发送请求并处理
+  try {
+    const response = await createRequest('/subscribe', {
+      method: 'POST',
+      data: {
+        rid: rid.value,
+        uid: uid.value,
+        time: time.value,
+        title: title.value,
+      },
+    });
+    if (response.data.code === 200) {
+      window.AndroidInterface?.showToast?.('发布成功');
+    } else {
+      window.AndroidInterface?.showToast?.('发布失败');
+    }
+  } catch (e) {
+    window.AndroidInterface?.showToast?.('发布失败');
+  }
 };
+
+// todo 打开日期、时间选择器
+function openPicker() {
+  console.log('打开日期、时间选择器');
+}
 </script>
 
 <style scoped lang="scss">
@@ -49,11 +89,11 @@ const sendPost = () => {
   width: w(375px);
   position: fixed;
   bottom: 0;
-  //background-color: #f2f3f5;
-  z-index: 999;
+  z-index: 99;
+  border-radius: 1rem 1rem 0 0;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 
   .header {
-    border-radius: 1rem 1rem 0 0;
     background-color: #ffffff;
     text-align: center;
     border-bottom: 1px solid #f2f3f5;
@@ -130,16 +170,22 @@ const sendPost = () => {
     align-items: center;
     display: flex;
     width: 100%;
-    height: 6rem;
+    height: 7.5rem;
     background-color: #f2f3f5;
 
     .button {
       width: 90%;
+      margin-top: 1rem;
       height: 2.5rem;
       border-radius: 0.4rem;
       background-color: $color-primary;
       color: #ffffff;
       border: none;
+    }
+
+    .button:disabled {
+      background-color: $color-secondary;
+      color: #ffffff;
     }
   }
 }
