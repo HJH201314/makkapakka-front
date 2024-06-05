@@ -6,8 +6,8 @@ import { useRouter } from 'vue-router';
 import { isAndroid } from '@/utils/browser.util';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
 import { AndroidUtil } from '@/utils/android.util';
-
 import adapter from 'webrtc-adapter';
+import ChatList from "@/pages/audience/components/ChatList.vue";
 
 definePage({
   name: '观众',
@@ -264,15 +264,18 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="audience">
-    <video id="vid" class="video" controls/>
-    <canvas v-show="showScreenShot" id="canvas1" class="video"/>
-    <video id="vid2" class="video2" controls/>
-    <canvas v-show="showScreenShot" id="canvas2" class="video2"/>
-    <div id="stop-and-play" @click="handleTogglePlay">
-      <!-- 叠在视频上方用于切换播放状态 -->
-    </div>
-    <div v-if="showPlayButton" class="play">
-      <Play @click="handleTogglePlay"/>
+      <div>
+            <video id="vid" class="video" controls/>
+
+        <canvas v-show="showScreenShot" id="canvas1" class="video"/>
+        <video id="vid2" class="video2" controls/>
+        <canvas v-show="showScreenShot" id="canvas2" class="video2"/>
+        <div id="stop-and-play" @click="handleTogglePlay">
+          <!-- 叠在视频上方用于切换播放状态 -->
+        </div>
+        <div v-if="showPlayButton" class="play">
+          <Play @click="handleTogglePlay"/>
+        </div>
     </div>
     <div class="layer">
       <div class="right-top">
@@ -282,6 +285,9 @@ onBeforeUnmount(() => {
       <div class="icon left-top" @click="handleQuit">
         <Back />
       </div>
+        <div class="chat">
+            <ChatList/>
+        </div>
       <div id="bottom-input-bar" class="bottom">
         <SlyFaceWhitSmile/>
         <input
@@ -345,7 +351,9 @@ onBeforeUnmount(() => {
     }
   }
 
+
   .layer {
+    display: flex;
     position: absolute;
     z-index: 12;
     inset: 0;
@@ -361,21 +369,6 @@ onBeforeUnmount(() => {
           color: $color-primary;
         }
       }
-    }
-
-    .center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      height: w(40px);
-      width: w(40px);
-      border-radius: w(40px);
-      background: rgb(0 0 0 / 20%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: w(10px);
     }
 
     .right-top {
@@ -401,6 +394,14 @@ onBeforeUnmount(() => {
       }
     }
 
+    .chat {
+      position: absolute;
+      bottom: w(50px);
+      left: 1rem;
+      right: 1rem;
+      overflow: hidden;
+      height: w(250px);
+    }
     .bottom {
       position: absolute;
       bottom: 1rem;
