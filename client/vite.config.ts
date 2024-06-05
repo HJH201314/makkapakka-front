@@ -24,6 +24,15 @@ export default () => {
       https: true,
       port: 5173,
       proxy: {
+        '/ws': {
+          target: 'wss://172.29.19.242:10006',
+          rewrite(path) {
+            return path.replace(/^\/ws/, '');
+          },
+          ws: true,
+          changeOrigin: true,
+          secure: false,
+        },
         '/srs': {
           target: 'http://swzx.fcraft.cn:11985',
           rewrite(path) {

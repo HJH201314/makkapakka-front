@@ -37,8 +37,9 @@ async function getAvailableStreams() {
   const streams = data.streams;
   streams.reverse();
   for (const stream of streams) {
-    if (stream.app.startsWith(`room_${params.uid}`)) {
-      console.log(stream.app);
+    const temp = Number(stream.app) / 1000;
+    if (temp >= 0 && temp < 100) {
+      console.log('realRoomId', stream.app);
       realRoomId.value = stream.app;
       break;
     }
@@ -264,18 +265,15 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="audience">
-      <div>
-            <video id="vid" class="video" controls/>
-
-        <canvas v-show="showScreenShot" id="canvas1" class="video"/>
-        <video id="vid2" class="video2" controls/>
-        <canvas v-show="showScreenShot" id="canvas2" class="video2"/>
-        <div id="stop-and-play" @click="handleTogglePlay">
-          <!-- 叠在视频上方用于切换播放状态 -->
-        </div>
-        <div v-if="showPlayButton" class="play">
-          <Play @click="handleTogglePlay"/>
-        </div>
+    <video id="vid" class="video" controls />
+    <canvas v-show="showScreenShot" id="canvas1" class="video" />
+    <video id="vid2" class="video2" controls />
+    <canvas v-show="showScreenShot" id="canvas2" class="video2" />
+    <div id="stop-and-play" @click="handleTogglePlay">
+      <!-- 叠在视频上方用于切换播放状态 -->
+    </div>
+    <div v-if="showPlayButton" class="play">
+      <Play @click="handleTogglePlay" />
     </div>
     <div class="layer">
       <div class="right-top">
@@ -289,13 +287,13 @@ onBeforeUnmount(() => {
             <ChatList/>
         </div>
       <div id="bottom-input-bar" class="bottom">
-        <SlyFaceWhitSmile/>
+        <SlyFaceWhitSmile />
         <input
           placeholder="说点什么吧"
           @blur="handleInputFocus('blur')"
           @focus="handleInputFocus('focus')"
         />
-        <SendOne/>
+        <SendOne />
       </div>
     </div>
   </div>
@@ -351,7 +349,6 @@ onBeforeUnmount(() => {
     }
   }
 
-
   .layer {
     display: flex;
     position: absolute;
@@ -369,6 +366,21 @@ onBeforeUnmount(() => {
           color: $color-primary;
         }
       }
+    }
+
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: w(40px);
+      width: w(40px);
+      border-radius: w(40px);
+      background: rgb(0 0 0 / 20%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: w(10px);
     }
 
     .right-top {

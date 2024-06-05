@@ -3,7 +3,6 @@ import { useDebounceFn, useDevicesList } from '@vueuse/core';
 import { Clipboard, FlipCamera, Power, Voice, VoiceOff } from '@icon-park/vue-next';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
-import { generateRandomString } from '@/utils/string';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
 import { AndroidUtil } from '@/utils/android.util';
 import { createRequest } from '@/api/base';
@@ -21,8 +20,9 @@ definePage({
 const userStore = useUserStore();
 
 // 注意要使用 nginx 将 /srs/ 转发到 srs 的 1985 端口
-const tempId = generateRandomString(1);
-const roomId = computed(() => `room_${userStore.userInfo.id || 0}_${tempId}`);
+const roomId = computed(
+  () => `${(userStore.userInfo.id || 0) * 1000 + Math.floor(Math.random() * 100)}`
+);
 const whipUrl = computed(
   () => `/srs/rtc/v1/whip/?app=${roomId.value}&stream=livestream&eip=111.230.21.98:18000`
 );
