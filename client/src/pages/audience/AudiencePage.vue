@@ -437,6 +437,7 @@ function sendMessage() {
       right: 1rem;
       overflow: hidden;
       height: w(250px);
+      z-index: 11;
     }
 
     .bottom {

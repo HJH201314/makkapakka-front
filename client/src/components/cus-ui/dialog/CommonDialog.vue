@@ -67,6 +67,7 @@ defineExpose<CommonDialogExpose>({
       </main>
       <footer>
         <cus-button
+          v-if="showCancel"
           class="btn"
           text="取消"
           tertiary

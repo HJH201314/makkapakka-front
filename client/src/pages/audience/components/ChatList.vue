@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 interface ChatItem {
   id: number;
@@ -37,14 +37,14 @@ const props = defineProps({
   uid: Number,
 });
 
-onMounted(() => {
+let wsLaunched = false;
+watchEffect(() => {
+  if (!props.rid || wsLaunched) return;
+  wsLaunched = true;
   // ws
   const host = `ws/websocket/${props.rid}/${props.uid}`;
   const { status, data } = useWebSocket(host, {
-    autoReconnect: {
-      retries: 3,
-      delay: 1000,
-    },
+    autoReconnect: true,
     heartbeat: {
       message: 'ws heartbeat',
       interval: 1000 * 10,
@@ -68,7 +68,8 @@ onMounted(() => {
   });
 });
 </script>
-<style scoped>
+<style lang="scss" scoped>
+@import '@/assets/main.scss';
 .chat-container {
   position: relative;
   height: 100%;
@@ -89,16 +90,18 @@ onMounted(() => {
 .chat-item__content {
   padding: 5px;
   border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background: rgb(0 0 0 / 20%);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto;
   display: flex;
 
   .chat-item__name {
     font-weight: bold;
+    color: $color-primary;
   }
 
   .chat-item__message {
+    color: white;
     margin-left: 10px;
     word-break: break-all;
   }
