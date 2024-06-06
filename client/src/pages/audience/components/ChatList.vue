@@ -45,15 +45,24 @@ watchEffect(() => {
   const host = `ws/websocket/${props.rid}/${props.uid}`;
   const { status, data } = useWebSocket(host, {
     autoReconnect: true,
+    // 发送心跳
     heartbeat: {
-      message: 'ws heartbeat',
-      interval: 1000 * 10,
+      message: 'ping',
+      interval: 1000 * 5,
+      pongTimeout: 1000 * 2,
+    },
+    onError(ws, event) {
+      console.log('连接失败：' + event);
     },
     onMessage(ws, event) {
       const data = JSON.parse(event.data);
+      // 心跳
+      if (data.content === 'pong' && data.userid === -1 && data.rid === -1) {
+        return;
+      }
       items.value.push({
         id: data.sendTime,
-        name: 'User ' + data.userId,
+        name: data.username,
         message: data.content,
       });
       // todo 推送消息并滚动到底部
@@ -70,6 +79,7 @@ watchEffect(() => {
 </script>
 <style lang="scss" scoped>
 @import '@/assets/main.scss';
+
 .chat-container {
   position: relative;
   height: 100%;

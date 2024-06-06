@@ -277,6 +277,7 @@ function sendMessage() {
       token: userStore.token,
     },
     body: JSON.stringify({
+      username: userStore.userInfo.name,
       content: message.value.toString(),
     }),
   });
