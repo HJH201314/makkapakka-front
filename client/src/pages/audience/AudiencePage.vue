@@ -7,7 +7,8 @@ import { isAndroid } from '@/utils/browser.util';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
 import { AndroidUtil } from '@/utils/android.util';
 import adapter from 'webrtc-adapter';
-import ChatList from "@/pages/audience/components/ChatList.vue";
+import ChatList from '@/pages/audience/components/ChatList.vue';
+import { useUserStore } from '@/stores/useUserStore';
 
 definePage({
   name: '观众',
@@ -136,6 +137,7 @@ async function clearEffects() {
 }
 
 const router = useRouter();
+
 async function handleQuit() {
   await clearEffects();
   if (isAndroid()) {
@@ -261,6 +263,24 @@ function handleInputFocus(type: 'focus' | 'blur') {
 onBeforeUnmount(() => {
   clearEffects();
 });
+
+// 发送消息
+const message = ref('');
+const userStore = useUserStore();
+
+function sendMessage() {
+  fetch(`/api10006/chat/${realRoomId.value}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      token: userStore.token,
+    },
+    body: JSON.stringify({
+      content: message.value,
+    }),
+  });
+  message.value = '';
+}
 </script>
 
 <template>
@@ -283,17 +303,18 @@ onBeforeUnmount(() => {
       <div class="icon left-top" @click="handleQuit">
         <Back />
       </div>
-        <div class="chat">
-            <ChatList/>
-        </div>
+      <div class="chat">
+        <ChatList :rid="realRoomId" :uid="params.uid" />
+      </div>
       <div id="bottom-input-bar" class="bottom">
         <SlyFaceWhitSmile />
         <input
           placeholder="说点什么吧"
           @blur="handleInputFocus('blur')"
           @focus="handleInputFocus('focus')"
+          v-model="message"
         />
-        <SendOne />
+        <SendOne @click="sendMessage" />
       </div>
     </div>
   </div>
@@ -301,11 +322,13 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 @import '@/assets/main.scss';
+
 .audience {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
   position: relative;
+
   .video {
     position: absolute;
     width: w(375px);
@@ -414,6 +437,7 @@ onBeforeUnmount(() => {
       overflow: hidden;
       height: w(250px);
     }
+
     .bottom {
       position: absolute;
       bottom: 1rem;
@@ -504,33 +528,41 @@ onBeforeUnmount(() => {
 video::-webkit-media-controls-fullscreen-button {
   display: none;
 }
+
 /* 播放按钮 */
 video::-webkit-media-controls-play-button {
   display: none;
 }
+
 /* 进度条 */
 video::-webkit-media-controls-timeline {
   display: none;
 }
+
 /* 观看的当前时间 */
 video::-webkit-media-controls-current-time-display {
   display: none;
 }
+
 /* 剩余时间 */
 video::-webkit-media-controls-time-remaining-display {
   display: none;
 }
+
 /* 音量按钮 */
 video::-webkit-media-controls-mute-button {
   display: none;
 }
+
 video::-webkit-media-controls-toggle-closed-captions-button {
   display: none;
 }
+
 /* 音量的控制条 */
 video::-webkit-media-controls-volume-slider {
   display: none;
 }
+
 /* 所有控件 */
 video::-webkit-media-controls-enclosure {
   display: none;

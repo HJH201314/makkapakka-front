@@ -24,11 +24,11 @@ declare module 'vue-router/auto-routes' {
     '观众': RouteRecordInfo<'观众', '/audience', Record<never, never>, Record<never, never>>,
     '直播中': RouteRecordInfo<'直播中', '/broadcast', Record<never, never>, Record<never, never>>,
     '直播结束': RouteRecordInfo<'直播结束', '/broadcast/end', Record<never, never>, Record<never, never>>,
+    'test': RouteRecordInfo<'test', '/test', Record<never, never>, Record<never, never>>,
     '/broadcast/BroadcastPreparePage': RouteRecordInfo<'/broadcast/BroadcastPreparePage', '/broadcast/BroadcastPreparePage', Record<never, never>, Record<never, never>>,
     '开播啦': RouteRecordInfo<'开播啦', '/broadcast/prepare', Record<never, never>, Record<never, never>>,
     '/test/test': RouteRecordInfo<'/test/test', '/test/test', Record<never, never>, Record<never, never>>,
     '/test/video': RouteRecordInfo<'/test/video', '/test/video', Record<never, never>, Record<never, never>>,
     '用户 - 直播页': RouteRecordInfo<'用户 - 直播页', '/user/home', Record<never, never>, Record<never, never>>,
-    '用户 - 测试页': RouteRecordInfo<'用户 - 测试页', '/user/test', Record<never, never>, Record<never, never>>,
   }
 }

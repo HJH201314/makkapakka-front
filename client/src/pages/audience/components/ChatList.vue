@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
 interface ChatItem {
   id: number;
@@ -32,38 +32,61 @@ interface ChatItem {
 const items = ref<ChatItem[]>([]);
 const scroller = ref<HTMLElement | null>(null);
 
-
+const props = defineProps({
+  rid: Number,
+  uid: Number,
+});
 
 onMounted(() => {
-    //mock 对接时删除
-  for (let i = 0; i < 1000; i++) {
+  //mock 对接时删除
+  for (let i = 0; i < 20; i++) {
     items.value.push({
       id: i,
       name: `User ${i}`,
       message: `Message ${i}`,
     });
   }
-  //template
-  const ws = new WebSocket('slot');
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    items.value.push(data);
-  };
-  //滚动到底部 失败！ 研究一下这个main.ts里的scroller.css样式表，可能有发现 组件名：vue-virtual-scroller，找找看有没有方法直接到底部
   nextTick(() => {
     if (scroller.value) {
+      console.log('scroller.value.scrollTop ' + scroller.value.scrollTop);
+      console.log('scroller.value.scrollHeight ' + scroller.value.scrollHeight);
       scroller.value.scrollTop = scroller.value.scrollHeight;
     }
   });
+  // ws
+  const { status, data } = useWebSocket(`/ws/websocket/${props.rid}/${props.uid}`, {
+    autoReconnect: {
+      retries: 3,
+      delay: 1000,
+    },
+    heartbeat: {
+      message: 'ws heartbeat',
+      interval: 1000 * 10,
+    },
+    onMessage(ws, event) {
+      const data = JSON.parse(event.data);
+      console.log(data);
+      items.value.push({
+        id: data.userId,
+        name: 'User ' + data.userId,
+        message: data.content,
+      });
+      // todo 推送消息并滚动到底部
+      // 滚动到底部 失败！ 研究一下这个main.ts里的scroller.css样式表，可能有发现
+      // 组件名：vue-virtual-scroller，找找看有没有方法直接到底部
+      nextTick(() => {
+        if (scroller.value) {
+          scroller.value.scrollTop = scroller.value.scrollHeight;
+        }
+      });
+    },
+  });
 });
-
-
 </script>
-
 <style scoped>
 .chat-container {
   position: relative;
-  height: 50vh; /* 占据页面的下半部分 */
+  height: 100%;
   width: 100%;
   overflow: hidden;
 }
@@ -73,10 +96,9 @@ onMounted(() => {
 }
 
 .chat-item {
-  padding: 5px 0;
   display: flex;
   justify-content: flex-start;
-  padding-left: 10px;
+  padding: 5px 0 5px 10px;
 }
 
 .chat-item__content {
@@ -86,6 +108,7 @@ onMounted(() => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: auto;
   display: flex;
+
   .chat-item__name {
     font-weight: bold;
   }
