@@ -33,28 +33,14 @@ const items = ref<ChatItem[]>([]);
 const scroller = ref<HTMLElement | null>(null);
 
 const props = defineProps({
-  rid: Number,
+  rid: String,
   uid: Number,
 });
 
 onMounted(() => {
-  //mock 对接时删除
-  for (let i = 0; i < 20; i++) {
-    items.value.push({
-      id: i,
-      name: `User ${i}`,
-      message: `Message ${i}`,
-    });
-  }
-  nextTick(() => {
-    if (scroller.value) {
-      console.log('scroller.value.scrollTop ' + scroller.value.scrollTop);
-      console.log('scroller.value.scrollHeight ' + scroller.value.scrollHeight);
-      scroller.value.scrollTop = scroller.value.scrollHeight;
-    }
-  });
   // ws
-  const { status, data } = useWebSocket(`/ws/websocket/${props.rid}/${props.uid}`, {
+  const host = `ws/websocket/${props.rid}/${props.uid}`;
+  const { status, data } = useWebSocket(host, {
     autoReconnect: {
       retries: 3,
       delay: 1000,
@@ -65,9 +51,8 @@ onMounted(() => {
     },
     onMessage(ws, event) {
       const data = JSON.parse(event.data);
-      console.log(data);
       items.value.push({
-        id: data.userId,
+        id: data.sendTime,
         name: 'User ' + data.userId,
         message: data.content,
       });

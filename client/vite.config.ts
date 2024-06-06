@@ -55,11 +55,12 @@ export default () => {
           changeOrigin: true,
         },
         '/api10006': {
-          target: 'http://172.29.19.242:10006',
+          target: 'https://172.29.19.242:10006',
           rewrite(path) {
             return path.replace(/^\/api10006/, '');
           },
           changeOrigin: true,
+          secure: false,
         },
         '/api51601': {
           target: 'http://172.29.19.242:51601',

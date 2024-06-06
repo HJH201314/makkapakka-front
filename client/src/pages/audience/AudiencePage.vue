@@ -269,6 +269,7 @@ const message = ref('');
 const userStore = useUserStore();
 
 function sendMessage() {
+  if (!message.value) return;
   fetch(`/api10006/chat/${realRoomId.value}`, {
     method: 'POST',
     headers: {
@@ -276,7 +277,7 @@ function sendMessage() {
       token: userStore.token,
     },
     body: JSON.stringify({
-      content: message.value,
+      content: message.value.toString(),
     }),
   });
   message.value = '';
@@ -304,7 +305,7 @@ function sendMessage() {
         <Back />
       </div>
       <div class="chat">
-        <ChatList :rid="realRoomId" :uid="params.uid" />
+        <ChatList :rid="realRoomId" :uid="userStore.userInfo.id" />
       </div>
       <div id="bottom-input-bar" class="bottom">
         <SlyFaceWhitSmile />
@@ -452,6 +453,7 @@ function sendMessage() {
       justify-content: flex-start;
       align-items: center;
       gap: w(5px);
+      color: white;
 
       span {
         margin-left: w(8px);
