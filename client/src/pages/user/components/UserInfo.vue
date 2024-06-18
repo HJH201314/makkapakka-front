@@ -34,10 +34,10 @@
       <div class="name">{{ name }}</div>
       <div class="desc">{{ desc }}</div>
     </div>
+    <transition name="slide">
+      <PostAppointment v-show="isOnPost" :appointed="appointed" @closePost="closePost" />
+    </transition>
   </div>
-  <transition name="slide">
-    <PostAppointment v-show="isOnPost" :appointed="appointed" />
-  </transition>
 </template>
 
 <script setup lang="ts">
@@ -75,6 +75,12 @@ let onFollow = (): void => {
     fans.value--;
   }
   emit('update:fans', fans.value);
+};
+
+// 关闭预约框
+const closePost = () => {
+  isOnPost.value = false;
+  console.log(isOnPost.value);
 };
 
 // 发布预约

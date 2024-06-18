@@ -42,14 +42,14 @@ watchEffect(() => {
   if (!props.rid || wsLaunched) return;
   wsLaunched = true;
   // ws
-  const host = `ws/websocket/${props.rid}/${props.uid}`;
+  const host = `ws/websocket/${props.rid}/15`;
   const { status, data } = useWebSocket(host, {
     autoReconnect: true,
     // 发送心跳
     heartbeat: {
       message: 'ping',
       interval: 1000 * 5,
-      pongTimeout: 1000 * 2,
+      pongTimeout: 1000 * 4,
     },
     onError(ws, event) {
       console.log('连接失败：' + event);
@@ -57,7 +57,7 @@ watchEffect(() => {
     onMessage(ws, event) {
       const data = JSON.parse(event.data);
       // 心跳
-      if (data.content === 'pong' && data.userid === -1 && data.rid === -1) {
+      if (data.content === 'pong' && data.userId === -1 && data.rid === -1) {
         return;
       }
       items.value.push({

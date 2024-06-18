@@ -1,46 +1,49 @@
 <template>
-  <div class="outer">
-    <div class="header">
-      <button class="cancel">取消</button>
-      <span class="title">选择开播时间</span>
-    </div>
-    <div class="main">
-      <div class="cover"></div>
-      <div class="col month" ref="monthRef" @scroll="monthScroll">
-        <ul>
-          <li class="extra-space-top"></li>
-          <li v-for="i in months" :key="i">{{ i }}月</li>
-          <li class="extra-space-bottom"></li>
-        </ul>
+  <div>
+    <div class="layer"></div>
+    <div class="outer">
+      <div class="header">
+        <button class="cancel" @click.stop="emitClose">取消</button>
+        <span class="title">选择开播时间</span>
       </div>
-      <div class="col day" ref="dayRef" @scroll="dayScroll">
-        <ul>
-          <li class="extra-space-top"></li>
-          <li v-for="i in days" :key="i">{{ i }}日</li>
-          <li class="extra-space-bottom"></li>
-        </ul>
+      <div class="main">
+        <div class="cover"></div>
+        <div class="col month" ref="monthRef" @scroll="monthScroll">
+          <ul>
+            <li class="extra-space-top"></li>
+            <li v-for="i in months" :key="i">{{ i }}月</li>
+            <li class="extra-space-bottom"></li>
+          </ul>
+        </div>
+        <div class="col day" ref="dayRef" @scroll="dayScroll">
+          <ul>
+            <li class="extra-space-top"></li>
+            <li v-for="i in days" :key="i">{{ i }}日</li>
+            <li class="extra-space-bottom"></li>
+          </ul>
+        </div>
+        <div class="hour col" ref="hourRef" @scroll="hourScroll">
+          <ul>
+            <li class="extra-space-top"></li>
+            <li v-for="i in hours" :key="i">
+              {{ i }}
+            </li>
+            <li class="extra-space-bottom"></li>
+          </ul>
+        </div>
+        <div class="minute col" ref="minuteRef" @scroll="minuteScroll">
+          <ul>
+            <li class="extra-space-top"></li>
+            <li v-for="i in minutes" :key="i">
+              {{ i }}
+            </li>
+            <li class="extra-space-bottom"></li>
+          </ul>
+        </div>
       </div>
-      <div class="hour col" ref="hourRef" @scroll="hourScroll">
-        <ul>
-          <li class="extra-space-top"></li>
-          <li v-for="i in hours" :key="i">
-            {{ i }}
-          </li>
-          <li class="extra-space-bottom"></li>
-        </ul>
+      <div class="footer">
+        <button class="confirm" @click="confirm">确定</button>
       </div>
-      <div class="minute col" ref="minuteRef" @scroll="minuteScroll">
-        <ul>
-          <li class="extra-space-top"></li>
-          <li v-for="i in minutes" :key="i">
-            {{ i }}
-          </li>
-          <li class="extra-space-bottom"></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer">
-      <button class="confirm">确定</button>
     </div>
   </div>
 </template>
@@ -48,6 +51,25 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const props = defineProps<{
+  isOpen?: boolean;
+}>();
+const emit = defineEmits(['selectedTime', 'close-picker']);
+const emitClose = () => {
+  emit('close-picker');
+};
+// 发送时间到父组件
+const confirm = () => {
+  selectedTime.value = {
+    month: selectedMonth.value,
+    day: selectedDay.value,
+    hour: selectedHour.value,
+    minute: selectedMinute.value,
+  };
+  console.log(selectedTime.value);
+  emit('selectedTime', selectedTime);
+  emitClose();
+};
 const monthRef = ref(null);
 const dayRef = ref(null);
 const hourRef = ref(null);
@@ -62,6 +84,12 @@ const selectedMonth = ref(curMonth.value);
 const selectedDay = ref(curDay.value);
 const selectedHour = ref(curHour.value);
 const selectedMinute = ref(curMinute.value);
+const selectedTime = ref({
+  month: curMonth.value,
+  day: curDay.value,
+  hour: curHour.value,
+  minute: curMinute.value,
+});
 let intervalId = null;
 
 onMounted(() => {
@@ -311,6 +339,7 @@ watch(selectedHour, () => {
     position: relative;
 
     .cancel {
+      z-index: 2;
       display: flex;
       justify-content: center;
       padding: 0 1rem;
@@ -351,6 +380,7 @@ watch(selectedHour, () => {
     }
 
     .col {
+      position: relative;
       z-index: 2;
       flex: 1;
       display: flex;

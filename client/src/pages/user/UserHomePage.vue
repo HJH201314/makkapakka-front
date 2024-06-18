@@ -11,7 +11,15 @@ definePage({
   path: '/user/home',
   name: '用户 - 直播页',
 });
-// todo：修改用户信息后，user/home没有对应变化；直播间相机转换；
+
+onMounted(() => {
+  // todo 发送room请求，创建直播间
+  // uid
+  // number
+  // name
+  // desc
+});
+
 // 观测页面顶部是否移出
 const realPageTopRef = ref();
 useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {

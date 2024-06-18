@@ -25,7 +25,7 @@ export default () => {
       port: 5173,
       proxy: {
         '/ws': {
-          target: 'wss://172.29.19.242:10006',
+          target: 'wss://192.168.68.1:10010',
           rewrite(path) {
             return path.replace(/^\/ws/, '');
           },
