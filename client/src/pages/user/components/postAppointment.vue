@@ -86,6 +86,10 @@ const sendPost = async () => {
     });
     if (response.code === 200) {
       window.AndroidInterface?.showToast?.('发布成功');
+      // 清空数据
+      title.value = '';
+      // 关闭预约框
+      emit('closeUserPost');
     } else {
       window.AndroidInterface?.showToast?.('发布失败');
     }
