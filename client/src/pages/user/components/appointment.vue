@@ -1,29 +1,32 @@
 <template>
-  <div class="outer">
-    <div class="container">
-      <div class="left">
-        <div class="title">直播预约：{{ title }}</div>
-        <div class="time">{{ dateString }} 进行直播</div>
-      </div>
-      <div class="right">
-        <button
-          v-if="isMyself"
-          id="withdraw"
-          class="button"
-          :style="{ backgroundColor: colors.colorPrimary }"
-          @click="openWithdrawNotification()"
-        >
-          {{ '撤销' }}
-        </button>
-        <button
-          v-else
-          id="appoint"
-          class="button"
-          @click="onAppoint()"
-          :style="{ backgroundColor: buttonColor }"
-        >
-          {{ buttonWords }}
-        </button>
+  <div>
+    <div v-if="show" class="layer" @click="closeNotification"></div>
+    <div class="outer">
+      <div class="container">
+        <div class="left">
+          <div class="title">直播预约：{{ title }}</div>
+          <div class="time">{{ dateString }} 进行直播</div>
+        </div>
+        <div class="right">
+          <button
+            v-if="isMyself"
+            id="withdraw"
+            class="button"
+            :style="{ backgroundColor: colors.colorPrimary }"
+            @click="openWithdrawNotification()"
+          >
+            {{ '撤销' }}
+          </button>
+          <button
+            v-else
+            id="appoint"
+            class="button"
+            @click="onAppoint()"
+            :style="{ backgroundColor: buttonColor }"
+          >
+            {{ buttonWords }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -33,7 +36,6 @@
 import { defineProps, ref } from 'vue';
 import colors from '@/assets/variables.module.scss';
 import { Button, notification } from 'ant-design-vue';
-import { confirm_layer } from '@/commands/confirm_layer';
 
 const props = defineProps<{
   isMyself: boolean;
@@ -44,50 +46,63 @@ const props = defineProps<{
 let date = ref(new Date(props.date || new Date()));
 let appointed = ref(props.appointed);
 let buttonWords = ref(appointed.value ? '已预约' : '预约');
-let buttonColor = computed(() => (appointed.value ? colors.colorSecondary : colors.colorPrimary));
+let buttonColor = ref(appointed.value ? colors.colorSecondary : colors.colorPrimary);
 
+// 显示蒙层
+const show = ref(false);
+
+const notificationKey = 'key';
+const openNotification = (isWithdraw: boolean) => {
+  let msg = '';
+  if (isWithdraw) {
+    msg = '撤销预约?';
+  } else {
+    msg = '取消预约?';
+  }
+  notification.open({
+    key: notificationKey,
+    message: msg,
+    description: isWithdraw ? '撤销后，将通知已预约的用户。' : '确定要取消预约吗?',
+    placement: 'bottom',
+    duration: null,
+    btn: () =>
+      h(
+        Button,
+        {
+          type: 'primary',
+          size: 'small',
+          style: `background-color: ${colors.colorPrimary}; border-color: ${colors.colorPrimary};`,
+          onClick: () => {
+            if (isWithdraw) {
+              appointed.value = !appointed.value;
+            } else {
+              buttonWords.value = '预约';
+            }
+            buttonColor.value = colors.colorPrimary;
+            // 关闭通知
+            notification.close(notificationKey);
+            show.value = false;
+          },
+        },
+        { default: () => '确定' }
+      ),
+    onClose: () => {
+      show.value = false;
+    },
+  });
+};
 /* 预约直播 - 用户 */
 const onAppoint = () => {
   if (appointed.value) {
-    const key = 'appoint';
-    const div = confirm_layer();
-    notification.open({
-      key,
-      message: '取消预约',
-      description: '是否取消预约？',
-      placement: 'bottom',
-      duration: null,
-      btn: () =>
-        h(
-          Button,
-          {
-            type: 'primary',
-            size: 'small',
-            style: `background-color: ${colors.colorPrimary}; border-color: ${colors.colorPrimary};`,
-            onClick: () => {
-              // todo 取消预约
-              notification.close(key);
-              appointed.value = !appointed.value;
-              buttonWords.value = '预约';
-              div.remove();
-            },
-          },
-          { default: () => '确定' }
-        ),
-      onClose: () => {
-        div.remove();
-      },
-    });
-    div.addEventListener('click', () => {
-      notification.close(key);
-    });
+    // 取消预约
+    show.value = true;
+    openNotification(false);
     console.log('取消预约');
   } else {
+    // todo 发送预约
     appointed.value = !appointed.value;
     buttonWords.value = '已预约';
     console.log('预约成功');
-    // todo 预约成功
-    window.AndroidInterface.subscribeNextBroadcast?.(Date.now(), 'aaa');
   }
 };
 
@@ -100,37 +115,13 @@ notification.config({
 const emit = defineEmits(['update:appointed']);
 const openWithdrawNotification = () => {
   console.log('撤销预约');
-  const key = 'withdraw';
-  const div = confirm_layer();
-  notification.open({
-    key,
-    message: '撤销预约？',
-    description: '撤销后，将通知已预约的用户。',
-    placement: 'bottom',
-    duration: null,
-    btn: () =>
-      h(
-        Button,
-        {
-          type: 'primary',
-          size: 'small',
-          style: `background-color: ${colors.colorPrimary}; border-color: ${colors.colorPrimary};`,
-          onClick: () => {
-            // todo 撤销预约
-            notification.close(key);
-            div.remove();
-            emit('update:appointed', false);
-          },
-        },
-        { default: () => '确定' }
-      ),
-    onClose: () => {
-      div.remove();
-    },
-  });
-  div.addEventListener('click', () => {
-    notification.close(key);
-  });
+  show.value = true; // 显示蒙层
+  openNotification(true);
+};
+
+const closeNotification = () => {
+  show.value = false;
+  notification.close(notificationKey);
 };
 
 /* 日期换算-今天、明天、、*/
@@ -153,6 +144,16 @@ let dateString = ref(formatAppointmentTime(date.value));
 </script>
 
 <style scoped lang="scss">
+.layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+}
+
 .outer {
   //display: flex;
   padding: 0.6rem;
