@@ -1,38 +1,40 @@
 <template>
   <!--    用户信息，包含：头像、粉丝数据、关注按钮、用户名、简介-->
-  <div class="info">
-    <div class="top">
-      <div class="left">
-        <!--todo        点击预览和保存-->
-        <a-avatar class="avatar" :size="100" icon="user" :src="avatar" />
-      </div>
-      <div class="right">
-        <div class="data">
-          <div class="fans">
-            <span class="title">粉丝</span>
-            <span class="data">{{ fans }}</span>
-          </div>
-          <div class="time">
-            <span class="title">直播时长</span>
-            <span class="data">{{ time }}h</span>
-          </div>
+  <div>
+    <div class="info">
+      <div class="top">
+        <div class="left">
+          <!--todo        点击预览和保存-->
+          <a-avatar class="avatar" :size="100" icon="user" :src="avatar" />
         </div>
-        <CusButton
-          v-if="!isMyself"
-          id="follow"
-          class="button"
-          @click="onFollow()"
-          :style="{ backgroundColor: followColor }"
-          >{{ followed ? '已关注' : '关注' }}
-        </CusButton>
-        <CusButton v-else type="primary" id="appointment" class="button" @click="onPost">
-          发布预约
-        </CusButton>
+        <div class="right">
+          <div class="data">
+            <div class="fans">
+              <span class="title">粉丝</span>
+              <span class="data">{{ fans }}</span>
+            </div>
+            <div class="time">
+              <span class="title">直播时长</span>
+              <span class="data">{{ time }}h</span>
+            </div>
+          </div>
+          <CusButton
+            v-if="!isMyself"
+            id="follow"
+            class="button"
+            @click="onFollow()"
+            :style="{ backgroundColor: followColor }"
+            >{{ followed ? '已关注' : '关注' }}
+          </CusButton>
+          <CusButton v-else type="primary" id="appointment" class="button" @click="onPost">
+            发布预约
+          </CusButton>
+        </div>
       </div>
-    </div>
-    <div class="detail">
-      <div class="name">{{ name }}</div>
-      <div class="desc">{{ desc }}</div>
+      <div class="detail">
+        <div class="name">{{ name }}</div>
+        <div class="desc">{{ desc }}</div>
+      </div>
     </div>
     <transition name="slide">
       <PostAppointment v-show="isOnPost" :appointed="appointed" @closeUserPost="closePost" />
@@ -215,11 +217,6 @@ let onPost = () => {
 
 .slide-enter-active,
 .slide-leave-active {
-  transition: all 0.2s ease-in-out;
-}
-
-.slide-enter-from,
-.slide-leave-to {
-  transform: translateY(100%);
+  transition: all 0.3s ease;
 }
 </style>
