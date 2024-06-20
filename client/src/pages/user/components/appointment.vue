@@ -99,7 +99,7 @@ const onAppoint = () => {
     openNotification(false);
     console.log('取消预约');
   } else {
-    // todo 发送预约
+    window.AndroidInterface?.subscribeNextBroadcast?.(new Date().getTime(), '预约的直播');
     appointed.value = !appointed.value;
     buttonWords.value = '已预约';
     console.log('预约成功');

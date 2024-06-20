@@ -62,7 +62,7 @@ const selectedTime = ref({
   minute: 0,
 });
 const finalTime = ref('');
-// 发送预约请求
+// 发送预约请求-主播
 const sendPost = async () => {
   if (props.appointed) {
     window.AndroidInterface?.showToast?.('已超过预约上限');
