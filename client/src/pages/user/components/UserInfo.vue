@@ -14,7 +14,7 @@
           </div>
           <div class="time">
             <span class="title">直播时长</span>
-            <span class="data">{{ time }}</span>
+            <span class="data">{{ time }}h</span>
           </div>
         </div>
         <CusButton
@@ -35,7 +35,7 @@
       <div class="desc">{{ desc }}</div>
     </div>
     <transition name="slide">
-      <PostAppointment v-show="isOnPost" :appointed="appointed" @closePost="closePost" />
+      <PostAppointment v-show="isOnPost" :appointed="appointed" @closeUserPost="closePost" />
     </transition>
   </div>
 </template>
@@ -45,14 +45,13 @@ import { ref } from 'vue';
 import colors from '@/assets/variables.module.scss';
 import { Avatar as AAvatar } from 'ant-design-vue';
 import PostAppointment from '@/pages/user/components/postAppointment.vue';
-import { confirm_layer } from '@/commands/confirm_layer';
 
 const props = defineProps<{
   // 是否是自己
   isMyself: boolean;
   avatar: string;
   fans: number;
-  time: string;
+  time: number;
   name: string;
   desc: string;
   followed: boolean;
@@ -86,12 +85,12 @@ const closePost = () => {
 // 发布预约
 let isOnPost = ref(false);
 let onPost = () => {
-  console.log('发布预约');
-  const div = confirm_layer();
+  console.log('发布预约aa');
+  // const div = confirm_layer();
   isOnPost.value = true;
-  div.addEventListener('click', () => {
-    isOnPost.value = false;
-  });
+  // div.addEventListener('click', () => {
+  //   isOnPost.value = false;
+  // });
 };
 </script>
 

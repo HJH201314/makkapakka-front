@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import UserInfo from '@/pages/user/components/UserInfo.vue';
-import LiveCard from '@/pages/live/components/LiveCard.vue';
 import { LeftOutlined } from '@ant-design/icons-vue';
 import { useUserStore } from '@/stores/useUserStore';
 import { useIntersectionObserver } from '@vueuse/core';
@@ -29,15 +28,24 @@ useIntersectionObserver(realPageTopRef, ([{ isIntersecting }]) => {
 });
 
 const userInfo = useUserStore().userInfo;
-const fans = ref(111);
-const likes = ref(333);
-const time = ref('1h');
-const name = ref(userInfo.name || '用户');
+const fans = ref(userInfo.fans || 0);
+const likes = ref(userInfo.likes || 0);
+const time = ref(userInfo.streamTime || 0);
+const name = ref(userInfo.name || '未命名用户');
 const avatarUrl = ref(userInfo.avatarUrl || 'https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
-const coverURL = ref('https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
+const coverURL = ref(userInfo.coverUrl || 'https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
+
+// todo 获取预约信息
 const date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
 const appointed = ref(true);
-const isMyself = ref(true);
+
+// 当前页面uid
+const params = useUrlSearchParams('history', {
+  initialValue: {
+    uid: 0,
+  },
+});
+const isMyself = ref(userInfo.id === params.uid);
 
 useClientBackPressed(() => {
   window.AndroidInterface?.quit?.();
@@ -76,7 +84,7 @@ useClientBackPressed(() => {
         :followed="false"
       />
       <div class="white-area">
-        <div class="living">
+        <div>
           <Appointment
             v-if="appointed"
             :is-myself="isMyself"
@@ -84,21 +92,16 @@ useClientBackPressed(() => {
             :date="date"
             v-model:appointed="appointed"
           />
-          <LiveCard
-            :avatar="userInfo.avatarUrl || avatarUrl"
-            :name="userInfo.name || name"
-            :coverURL="coverURL"
-            title="嘿嘿嘿"
-          />
         </div>
-        <div class="living">
-          <LiveCard
-            :avatar="userInfo.avatarUrl || avatarUrl"
-            :name="userInfo.name || name"
-            :coverURL="coverURL"
-            title="嘿嘿嘿"
-          />
-        </div>
+        <!--        todo 历史记录-->
+        <!--        <div class="living">-->
+        <!--          <LiveCard-->
+        <!--            :avatar="userInfo.avatarUrl || avatarUrl"-->
+        <!--            :name="userInfo.name || name"-->
+        <!--            :coverURL="coverURL"-->
+        <!--            title="嘿嘿嘿"-->
+        <!--          />-->
+        <!--        </div>-->
       </div>
     </div>
   </div>
@@ -142,7 +145,13 @@ useClientBackPressed(() => {
       background: white;
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      column-gap: 1rem;
+
+      .living {
+        display: flex;
+        flex-direction: column;
+        //row-gap: 1rem;
+      }
     }
   }
 }
