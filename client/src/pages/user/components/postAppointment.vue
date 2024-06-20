@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="layer"></div>
+    <div class="layer" @click.stop="closePost"></div>
     <div class="outer">
       <div class="header">
         <button class="cancel" @click="closePost">取消</button>
@@ -49,6 +49,7 @@ const props = defineProps<{
   appointed: boolean;
 }>();
 
+const emit = defineEmits(['closeUserPost']);
 const userInfo = useUserStore().userInfo;
 const rid = ref(''); // 直播间id
 const uid = userInfo.id; // 用户id
@@ -67,9 +68,8 @@ const sendPost = async () => {
     window.AndroidInterface?.showToast?.('已超过预约上限');
     // 清空数据
     title.value = '';
-
     // 关闭预约框
-    close();
+    emit('closeUserPost');
     return;
   }
 
@@ -112,16 +112,26 @@ watchEffect(() => {
     .padStart(2, '0')}`;
 });
 
-// todo 关闭预约框
-const emit = defineEmits(['closePost']);
+// 关闭预约框
 const closePost = () => {
-  emit('closePost');
-  console.log('关闭预约框');
+  emit('closeUserPost');
+  // 清空数据
+  title.value = '';
 };
 </script>
 
 <style scoped lang="scss">
 @import '@/assets/main';
+
+.layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 98;
+}
 
 .outer {
   width: w(375px);
@@ -144,6 +154,7 @@ const closePost = () => {
     position: relative;
 
     .cancel {
+      z-index: 2;
       display: flex;
       justify-content: center;
       padding: 0 1rem;

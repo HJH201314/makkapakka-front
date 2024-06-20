@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="layer"></div>
+    <div class="layer" @click="emitClose"></div>
     <div class="outer">
       <div class="header">
-        <button class="cancel" @click.stop="emitClose">取消</button>
+        <button class="cancel" @click="emitClose">取消</button>
         <span class="title">选择开播时间</span>
       </div>
       <div class="main">
@@ -316,6 +316,15 @@ watch(selectedHour, () => {
 
 * {
   box-sizing: border-box;
+}
+
+.layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99;
 }
 
 .outer {
