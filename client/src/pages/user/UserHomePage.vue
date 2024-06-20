@@ -28,7 +28,7 @@ async function createRoom() {
       data: JSON.stringify({
         uid: userInfo.id,
         name: userInfo.name,
-        number: 0,
+        number: (userInfo.id ?? 0) * 1000,
         detail: '',
       }),
     });
