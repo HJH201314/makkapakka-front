@@ -84,7 +84,7 @@ const sendPost = async () => {
         title: title.value,
       },
     });
-    if (response.code === 200) {
+    if (response.data?.code == '200') {
       window.AndroidInterface?.showToast?.('发布成功');
       // 清空数据
       title.value = '';
