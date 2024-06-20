@@ -42,7 +42,7 @@ watchEffect(() => {
   if (!props.rid || wsLaunched) return;
   wsLaunched = true;
   // ws
-  const host = `ws/websocket/${props.rid}/15`;
+  const host = `ws/websocket/${props.rid}/${props.uid}`;
   const { status, data } = useWebSocket(host, {
     autoReconnect: true,
     // 发送心跳
