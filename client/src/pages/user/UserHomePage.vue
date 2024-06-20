@@ -5,8 +5,7 @@ import { useUserStore } from '@/stores/useUserStore';
 import { useIntersectionObserver } from '@vueuse/core';
 import Appointment from '@/pages/user/components/appointment.vue';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
-import { createRequest10006 } from '@/api/base';
-import { createRequest8088 } from '@/api/base';
+import { createRequest10006, createRequest8088 } from '@/api/base';
 
 definePage({
   path: '/user/home',
@@ -21,6 +20,7 @@ onMounted(() => {
   // desc
   createRoom();
 });
+
 async function createRoom() {
   try {
     const roomInfo = await createRequest10006('/room', {
@@ -58,7 +58,7 @@ const date = ref('');
 const appointed = ref(false);
 
 async function getAppointment() {
-try {
+  try {
     const appointment = await createRequest8088(`/subscribe/${userInfo.id}`, {
       method: 'GET',
       params: {
@@ -68,7 +68,7 @@ try {
     if (appointment) {
       appointed.value = true;
       date.value = '2021-10-10 10:10:10';
-        //appointment.data.date;
+      //appointment.data.date;
     }
   } catch (e) {
     console.error(e);
@@ -86,6 +86,11 @@ const isMyself = ref(userInfo.id === params.uid);
 useClientBackPressed(() => {
   window.AndroidInterface?.quit?.();
 });
+
+// 返回
+function goBack() {
+  window.AndroidInterface?.quit?.();
+}
 </script>
 
 <template>
@@ -100,7 +105,7 @@ useClientBackPressed(() => {
     <div class="toolbar">
       <!-- 返回按钮 -->
       <div class="back-icon">
-        <LeftOutlined style="color: white" />
+        <LeftOutlined style="color: white" @click="goBack" />
       </div>
     </div>
     <div class="real-page">
