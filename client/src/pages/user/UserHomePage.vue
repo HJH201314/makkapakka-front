@@ -5,6 +5,8 @@ import { useUserStore } from '@/stores/useUserStore';
 import { useIntersectionObserver } from '@vueuse/core';
 import Appointment from '@/pages/user/components/appointment.vue';
 import { useClientBackPressed } from '@/commands/useClientBackPressed';
+import { createRequest10006 } from '@/api/base';
+import { createRequest8088 } from '@/api/base';
 
 definePage({
   path: '/user/home',
@@ -17,7 +19,23 @@ onMounted(() => {
   // number
   // name
   // desc
+  createRoom();
 });
+async function createRoom() {
+  try {
+    const roomInfo = await createRequest10006('/room', {
+      method: 'POST',
+      data: JSON.stringify({
+        uid: userInfo.id,
+        name: userInfo.name,
+        number: 0,
+        detail: '',
+      }),
+    });
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 // 观测页面顶部是否移出
 const realPageTopRef = ref();
@@ -36,8 +54,26 @@ const avatarUrl = ref(userInfo.avatarUrl || 'https://img2.imgtp.com/2024/04/11/Q
 const coverURL = ref(userInfo.coverUrl || 'https://img2.imgtp.com/2024/04/11/Qer8kHaD.jpg');
 
 // todo 获取预约信息
-const date = ref(new Date(2024, 4, 20, 12, 0, 0, 0));
-const appointed = ref(true);
+const date = ref('');
+const appointed = ref(false);
+
+async function getAppointment() {
+try {
+    const appointment = await createRequest8088(`/subscribe/${userInfo.id}`, {
+      method: 'GET',
+      params: {
+        uid: userInfo.id,
+      },
+    });
+    if (appointment) {
+      appointed.value = true;
+      date.value = '2021-10-10 10:10:10';
+        //appointment.data.date;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 // 当前页面uid
 const params = useUrlSearchParams('history', {
