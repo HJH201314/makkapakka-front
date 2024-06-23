@@ -406,11 +406,11 @@ onBeforeUnmount(async () => {
       <div class="icon left-bottom" @click="handleGoLive">
         <Clipboard />
       </div>
-      <div style="color: rgba(0 0 0 / 10%); z-index: -1">
-        {{ microphones }}
-        ///
-        {{ currentMicrophone }}
-      </div>
+<!--      <div style="color: rgba(0 0 0 / 10%); z-index: -1">-->
+<!--        {{ microphones }}-->
+<!--        ///-->
+<!--        {{ currentMicrophone }}-->
+<!--      </div>-->
     </div>
   </div>
 </template>

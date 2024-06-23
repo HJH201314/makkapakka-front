@@ -38,6 +38,17 @@ const props = defineProps({
 });
 
 let wsLaunched = false;
+
+// onMounted(() => {
+//   for (const i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]) {
+//     items.value.push({
+//       id: i,
+//       name: 'name' + i,
+//       message: 'message' + i,
+//     });
+//   }
+// });
+
 watchEffect(() => {
   if (!props.rid || wsLaunched) return;
   wsLaunched = true;
@@ -75,6 +86,16 @@ watchEffect(() => {
       });
     },
   });
+});
+
+defineExpose({
+  addItem(name: string, message: string) {
+    items.value.push({
+      id: items.value.length,
+      name,
+      message,
+    });
+  },
 });
 </script>
 <style lang="scss" scoped>

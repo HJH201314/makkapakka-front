@@ -267,9 +267,11 @@ onBeforeUnmount(() => {
 // 发送消息
 const message = ref('');
 const userStore = useUserStore();
+const chatList = ref();
 
 function sendMessage() {
   if (!message.value) return;
+  chatList.value?.addItem(userStore.userInfo.name, message.value);
   fetch(`/api10006/chat/${realRoomId.value}`, {
     method: 'POST',
     headers: {
@@ -297,6 +299,9 @@ function sendMessage() {
     <div v-if="showPlayButton" class="play">
       <Play @click="handleTogglePlay" />
     </div>
+    <div class="chat">
+      <ChatList ref="chatList" :rid="realRoomId" :uid="userStore.userInfo.id" />
+    </div>
     <div class="layer">
       <div class="right-top">
         <div class="state"></div>
@@ -304,9 +309,6 @@ function sendMessage() {
       </div>
       <div class="icon left-top" @click="handleQuit">
         <Back />
-      </div>
-      <div class="chat">
-        <ChatList :rid="realRoomId" :uid="userStore.userInfo.id" />
       </div>
       <div id="bottom-input-bar" class="bottom">
         <SlyFaceWhitSmile />
@@ -374,6 +376,17 @@ function sendMessage() {
     }
   }
 
+  .chat {
+    position: absolute;
+    bottom: w(60px);
+    left: 1rem;
+    right: 1rem;
+    overflow: auto;
+    width: w(375px);
+    height: w(233px);
+    z-index: 13;
+  }
+
   .layer {
     display: flex;
     position: absolute;
@@ -429,16 +442,6 @@ function sendMessage() {
         border-radius: w(10px);
         background: $color-success;
       }
-    }
-
-    .chat {
-      position: absolute;
-      bottom: w(50px);
-      left: 1rem;
-      right: 1rem;
-      overflow: hidden;
-      height: w(250px);
-      z-index: 11;
     }
 
     .bottom {
